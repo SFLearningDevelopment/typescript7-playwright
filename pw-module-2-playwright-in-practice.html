@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     SF KNOWLEDGE HUB — TypeScript 7 for Playwright — MODULE 2
+     Playwright on TypeScript 7 in Practice
+     moduleKey (EXAMPLE_ID): pw-module-2-playwright-in-practice
+     courseId  (CP_COURSE_ID): qAPsB1Cn3WbegUqkhPm3
+     Tabs: Overview / Typing your tests / tsconfig & the type-check gate / Check.
+     ============================================================================ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 2 — Playwright on TypeScript 7 in Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Code+Pro:wght@400;600&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1a6eb5; --blue-dark:#0f4c81; --ink:#1f2933; --muted:#647687;
+    --bg:#eef2f8; --card:#ffffff; --border:#d6e0ee; --green:#16a34a; --coral:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;font-size:17px}
+  .userbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--border);font-size:14px}
+  .signout{padding:8px 16px;border:none;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit}
+  .crumbs{padding:14px 24px;color:var(--muted);font-size:13px}
+  .crumbs a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:860px;margin:0 auto;padding:8px 24px 80px}
+  h1{font-family:'Source Serif 4',Georgia,serif;font-size:30px;margin:8px 0 4px}
+  h3{font-family:'Source Serif 4',Georgia,serif;font-size:19px;margin:22px 0 6px}
+  .eyebrow{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .tag{font-family:'Source Code Pro',monospace;font-size:12px;background:#e3edf9;color:var(--blue-dark);padding:5px 10px;border-radius:14px}
+  .tabbar{display:flex;flex-wrap:wrap;gap:4px;border-bottom:2px solid var(--border);margin:22px 0 0}
+  .tabbtn{appearance:none;border:none;background:none;font-family:inherit;font-size:15px;font-weight:600;color:var(--muted);padding:11px 16px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+  .tabbtn:hover{color:var(--blue)}
+  .tabbtn.active{color:var(--blue-dark);border-bottom-color:var(--blue)}
+  .tabpanel{display:none}
+  .tabpanel.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:.4}to{opacity:1}}
+  .concepts{margin:18px 0}
+  .concept{border:1px solid var(--border);border-radius:12px;margin:10px 0;overflow:hidden;background:var(--card)}
+  .concept summary{cursor:pointer;padding:16px 18px;list-style:none;display:flex;align-items:center;gap:12px}
+  .concept summary::-webkit-details-marker{display:none}
+  .concept .chip{font-family:'Source Code Pro',monospace;font-size:12px;background:#e3edf9;color:var(--blue-dark);padding:5px 10px;border-radius:14px;white-space:nowrap}
+  .concept .headline{font-weight:600;color:var(--ink)}
+  .concept .toggle{margin-left:auto;font-family:'Source Code Pro',monospace;color:var(--blue);font-size:18px;line-height:1}
+  .concept[open] .toggle{transform:rotate(45deg)}
+  .concept .concept-body{padding:0 18px 18px}
+  .concept .concept-body p{margin:12px 0}
+  .concept .concept-body p:first-child{margin-top:4px}
+  .concept .concept-body p:last-child{margin-bottom:0}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin:18px 0}
+  .card p{margin:0 0 12px}
+  .card p:last-child{margin-bottom:0}
+  code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#eef3f9;padding:2px 6px;border-radius:5px}
+  pre{background:#0f2233;color:#e6edf3;border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:'Source Code Pro',monospace;font-size:14.5px;line-height:1.6;margin:14px 0}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit}
+  .cmt{color:#7d97ad}
+  .add{color:#7ee787}
+  .del{color:#ffa198}
+  .note{border-left:4px solid var(--blue);background:#f4f8fd;border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:15.5px}
+  .note.warn{border-left-color:#d08a1e;background:#fdf7ec}
+  .note strong{color:var(--blue-dark)}
+  table.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+  table.tbl th,table.tbl td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top}
+  table.tbl th{background:#f4f8fd;font-family:'Source Code Pro',monospace;font-size:12.5px;color:var(--blue-dark)}
+  table.tbl td code{background:#eef3f9}
+  .primer{border:1px solid var(--border);border-radius:12px;margin:18px 0;overflow:hidden}
+  .primer summary{cursor:pointer;padding:14px 18px;background:#f4f8fd;font-weight:600;color:var(--blue-dark);list-style:none}
+  .primer summary::-webkit-details-marker{display:none}
+  .primer summary::before{content:'+ ';font-family:'Source Code Pro',monospace}
+  .primer[open] summary::before{content:'– '}
+  .primer .primer-body{padding:0 18px 16px}
+  .primer .primer-body p{margin:12px 0}
+  .q{margin:16px 0}
+  .q .stem{font-weight:600;margin-bottom:8px}
+  .opt{display:block;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer}
+  .opt input{margin-right:10px}
+  .submit-btn{padding:11px 20px;border:none;border-radius:8px;background:var(--blue);color:#fff;font-family:inherit;font-size:15px;cursor:pointer}
+  .submit-btn:disabled{background:#c3d3e6;cursor:not-allowed}
+  .submit-note{font-family:'Source Code Pro',monospace;font-size:13px;color:var(--muted);margin-top:8px}
+  .hidden{display:none}
+  .complete-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);margin-top:22px;padding-top:18px}
+  .complete-bar.disabled{opacity:.5}
+  .complete-bar .redo-btn{margin-left:auto;display:none;border:1px solid var(--border);background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit}
+  .complete-bar .redo-btn.visible{display:inline-block}
+  .complete-bar.done{color:var(--green)}
+  .nav-row{display:flex;justify-content:space-between;margin-top:30px}
+  .nav-btn{padding:12px 18px;border-radius:8px;background:var(--blue);color:#fff;text-decoration:none;font-weight:600}
+  .nav-btn.secondary{background:#fff;color:var(--blue);border:1px solid var(--border)}
+  .advisory{border-left:4px solid #d08a1e;background:#fdf7ec;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:14.5px;color:var(--ink)}
+  .advisory .when{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#a96c12;display:block;margin-bottom:3px}
+  .advisory code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#f5ead2;padding:2px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+
+<div class="userbar">
+  <span>Welcome, <span id="userEmail">…</span></span>
+  <button class="signout" onclick="pmSignOut()">Sign out</button>
+</div>
+<div class="crumbs">
+  <a href="course-map.html">Back to course dashboard</a> / Module 2 / Playwright on TypeScript 7 in Practice
+</div>
+
+<div class="wrap">
+  <div class="eyebrow">Module 2</div>
+  <h1>Playwright on TypeScript 7 in Practice</h1>
+  <div class="tags">
+    <span class="tag">page objects</span>
+    <span class="tag">fixtures</span>
+    <span class="tag">tsconfig</span>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tabbtn active" data-tab="overview">Overview</button>
+    <button class="tabbtn" data-tab="typing">Typing your tests</button>
+    <button class="tabbtn" data-tab="tsconfig">tsconfig &amp; the gate</button>
+    <button class="tabbtn" data-tab="check">Check your knowledge</button>
+  </div>
+
+  <!-- TAB: OVERVIEW ========================================================= -->
+  <div class="tabpanel active" id="tab-overview">
+    <p style="color:var(--muted);margin:18px 0 4px">Module 1 covered why a faster compiler matters and how to run it. This module is the practical core: how to wire the type-check gate properly, what Playwright actually does with your <code>tsconfig</code>, and how to type your tests so the compiler catches mistakes for you. Open each idea.</p>
+
+    <div class="concepts">
+      <details class="concept" open>
+        <summary>
+          <span class="chip">the gate</span>
+          <span class="headline">Type-check before you test</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>Because Playwright runs specs without type-checking them, the discipline that makes TypeScript worthwhile is running <code>tsc --noEmit</code> as a gate <em>before</em> the browser tests. Wire it as a <code>pretest</code> script and a single <code>npm test</code> does both in order: check types, then run. In CI, run the same check as its own step before <code>playwright test</code>.</p>
+          <p>On TypeScript 7 this gate is fast enough that it stops being something people skip "to save time." That's the real behavioural win: a fast gate is a gate people actually keep.</p>
+        </div>
+      </details>
+
+      <details class="concept">
+        <summary>
+          <span class="chip">tsconfig</span>
+          <span class="headline">Playwright honours only a few tsconfig options</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>Important and easy to miss: when Playwright loads your test files, it only respects a small subset of <code>tsconfig.json</code> options — <code>allowJs</code>, <code>baseUrl</code>, <code>paths</code>, and <code>references</code>. Everything else in your <code>tsconfig</code> (like <code>strict</code>, <code>target</code>, the full type-checking settings) is used by <strong>tsc</strong> when it checks your types, not by Playwright when it runs them.</p>
+          <p>So there are really two consumers of your <code>tsconfig</code>: <code>tsc --noEmit</code> (which reads all of it, and is where TypeScript 7's speed applies) and Playwright's runner (which reads just those four). Keeping that split clear avoids confusion like "why didn't Playwright respect my strict setting?" — it isn't supposed to; your <code>tsc</code> gate is.</p>
+        </div>
+      </details>
+
+      <details class="concept">
+        <summary>
+          <span class="chip">typing well</span>
+          <span class="headline">Well-typed page objects and fixtures pay off</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>The value you get from the fast gate is proportional to how well your tests are typed. If your page objects, fixtures, and test data carry good types, the compiler catches a wrong method name, a missing property, or a mismatched argument instantly — and on TypeScript 7 it does so fast enough to run on every save.</p>
+          <p>The "Typing your tests" tab walks through the patterns: typed page objects, Playwright's typed custom fixtures, and typed test data. None of this is new in TypeScript 7 — but a faster compiler is what makes leaning on these types comfortable in a large suite.</p>
+        </div>
+      </details>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>The page object pattern.</strong> A <strong>page object</strong> is a class that represents a page (or a part of one) in your app, bundling its locators and the actions you take on it. Instead of repeating <code>page.getByLabel('Password')</code> across twenty specs, you write a <code>LoginPage</code> class with a <code>login(user, pass)</code> method and call that. Tests read like plain English, and when the UI changes you fix the selector in one place. TypeScript types the class so callers can't misuse it.</p>
+
+        <p><strong>What a Playwright fixture is.</strong> A <strong>fixture</strong> is how Playwright supplies ready-made things to a test — the built-in <code>page</code> is a fixture, and you can define your own (a logged-in page, a seeded user, an API client). Fixtures are set up before the test and torn down after, automatically. Playwright lets you extend the base <code>test</code> with typed custom fixtures, so each test receives exactly the typed helpers it asked for.</p>
+
+        <p><strong>Why types matter more in tests than you'd think.</strong> A type error in application code might be caught by a unit test. A type error in a <em>test</em> often isn't caught by anything until the test runs in a real browser and fails confusingly minutes later — or worse, passes for the wrong reason. The <code>tsc</code> gate is your unit test for your tests, and a fast compiler is what lets you run it constantly rather than occasionally.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: TYPING YOUR TESTS =============================================== -->
+  <div class="tabpanel" id="tab-typing">
+    <div class="card">
+      <h3 style="margin-top:0">A typed page object</h3>
+      <p>A page object is just a typed class. Notice that the constructor takes a typed <code>Page</code>, and methods have typed parameters — so a caller who passes the wrong thing is caught by <code>tsc</code>:</p>
+      <pre><code>import { type Page, type Locator } from '@playwright/test';
+
+export class LoginPage {
+  readonly page: Page;
+  readonly username: Locator;
+  readonly password: Locator;
+  readonly submit: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.username = page.getByLabel('User Name');
+    this.password = page.getByLabel('Password');
+    this.submit   = page.getByRole('button', { name: 'Sign in' });
+  }
+
+  async login(user: string, pass: string): Promise&lt;void&gt; {
+    await this.username.fill(user);
+    await this.password.fill(pass);
+    await this.submit.click();
+  }
+}</code></pre>
+      <div class="note"><strong>What the gate catches here.</strong> Call <code>login(123)</code> instead of <code>login('alice','pw')</code> and <code>tsc --noEmit</code> flags it immediately — wrong argument type, too few arguments. Misspell <code>getByRole</code> as <code>getByrole</code> and it's caught too. None of this would fail at <code>playwright test</code> time until the browser actually ran.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">A typed custom fixture</h3>
+      <p>Playwright lets you extend the base <code>test</code> with your own fixtures, fully typed. Here a <code>loginPage</code> fixture hands every test a ready <code>LoginPage</code>:</p>
+      <pre><code>import { test as base, expect } from '@playwright/test';
+import { LoginPage } from './pages/LoginPage';
+
+type MyFixtures = { loginPage: LoginPage };
+
+export const test = base.extend&lt;MyFixtures&gt;({
+  loginPage: async ({ page }, use) => {
+    await page.goto('/login');
+    await use(new LoginPage(page));
+  },
+});
+
+export { expect };</code></pre>
+      <p>Now a spec asks for the fixture by name and receives it typed:</p>
+      <pre><code>import { test, expect } from './fixtures';
+
+test('user can sign in', async ({ loginPage, page }) => {
+  await loginPage.login('alice', 'secret');
+  await expect(page.getByText('Welcome, alice')).toBeVisible();
+});</code></pre>
+      <div class="note"><strong>Type-safe by construction.</strong> Because <code>MyFixtures</code> declares <code>loginPage: LoginPage</code>, a test that typos the fixture name or uses a method the class doesn't have is caught by the gate — not discovered during a browser run.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Typed test data</h3>
+      <p>Give your test data a type so a malformed record is caught where it's defined, not deep in a failing assertion:</p>
+      <pre><code>type User = { name: string; email: string; admin: boolean };
+
+const users: User[] = [
+  { name: 'Alice', email: 'alice@example.com', admin: true  },
+  { name: 'Bob',   email: 'bob@example.com',   admin: false },
+  <span class="del">// { name: 'Cara', email: 'cara@example.com' }  // tsc: missing 'admin'</span>
+];
+
+for (const u of users) {
+  test(`sign in as ${u.name}`, async ({ loginPage }) => {
+    await loginPage.login(u.email, 'secret');
+  });
+}</code></pre>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>Types, interfaces, and <code>Locator</code>/<code>Page</code>.</strong> Playwright ships its own types: <code>Page</code> is the type of a browser page, <code>Locator</code> is the type of a located element, and so on. When you write <code>readonly username: Locator</code>, you're telling the compiler what that property holds, so it can check every use of it. A <strong>type alias</strong> (<code>type User = {...}</code>) names a shape so you can reuse it; an <strong>interface</strong> does much the same for object shapes. Either lets the compiler hold your data to a contract.</p>
+
+        <p><strong>What <code>Promise&lt;void&gt;</code> and <code>async</code> mean here.</strong> Playwright actions are asynchronous — they return a <strong>Promise</strong>, a value that completes later. <code>async</code>/<code>await</code> is how you write that readably: <code>await this.submit.click()</code> waits for the click to finish. A method typed <code>Promise&lt;void&gt;</code> promises to complete but return no value. Getting these wrong (forgetting an <code>await</code>) is a classic test bug; with proper typing and a linter rule, the gate can catch many of them.</p>
+
+        <p><strong>Generics, briefly — the <code>&lt;MyFixtures&gt;</code> part.</strong> <code>base.extend&lt;MyFixtures&gt;(...)</code> uses a <strong>generic</strong>: you hand <code>extend</code> a type describing your fixtures, and it gives you back a <code>test</code> function that knows about them. Generics are how a reusable function preserves specific type information instead of falling back to "anything." You don't need to write generics often as a tester, but recognising the angle-bracket syntax helps you read Playwright's typed APIs.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: TSCONFIG & THE GATE ============================================= -->
+  <div class="tabpanel" id="tab-tsconfig">
+    <div class="advisory">
+      <span class="when">Accurate as of June 2026</span>
+      The tsconfig behaviour below reflects Playwright's documented support and the TypeScript 7.0 RC. Verify against the official Playwright TypeScript docs and the <code>@typescript/native-preview</code> npm page if something differs.
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Two readers, one tsconfig</h3>
+      <p>Your <code>tsconfig.json</code> is read by two different things, and they use different parts of it:</p>
+      <table class="tbl">
+        <tr><th>Reader</th><th>Uses</th><th>Role</th></tr>
+        <tr><td><code>tsc --noEmit</code></td><td>All compiler options (strict, target, etc.)</td><td>Type-checks your tests. <strong>This is where TypeScript 7 speeds things up.</strong></td></tr>
+        <tr><td>Playwright runner</td><td>Only <code>allowJs</code>, <code>baseUrl</code>, <code>paths</code>, <code>references</code></td><td>Transforms and runs specs (no type-checking).</td></tr>
+      </table>
+      <p>So your <code>strict</code> setting, your <code>target</code>, your full type rules — those govern the <em>gate</em>, run by <code>tsc</code>. Playwright ignores them when running. Knowing this prevents the common "Playwright didn't enforce my tsconfig" confusion.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">A sensible tests tsconfig</h3>
+      <p>Playwright recommends a separate <code>tsconfig.json</code> inside your tests directory so test settings don't bleed into app code. A reasonable starting point:</p>
+      <pre><code>// tests/tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true,            <span class="cmt">// catch null/any mistakes in tests</span>
+    "target": "ESNext",
+    "module": "commonjs",
+    "baseUrl": ".",            <span class="cmt">// required if you use "paths"</span>
+    "paths": {
+      "@pages/*": ["pages/*"]  <span class="cmt">// Playwright honours this</span>
+    }
+  }
+}</code></pre>
+      <p>Playwright automatically picks up the closest <code>tsconfig.json</code> for each file it loads, so a <code>tests/tsconfig.json</code> applies to your specs without extra wiring.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Wire the gate: local and CI</h3>
+      <p><strong>Locally</strong>, the pretest script makes <code>npm test</code> check then run:</p>
+      <pre><code>{
+  "scripts": {
+    "pretest": "tsc -p tests/tsconfig.json --noEmit",
+    "test": "playwright test"
+  }
+}</code></pre>
+      <p><strong>In CI</strong>, run the type-check as its own step before the tests, so a type error fails fast and cheap (no browser spin-up needed to find it):</p>
+      <pre><code><span class="cmt"># GitHub Actions (sketch)</span>
+- name: Type-check
+  run: npx tsc -p tests/tsconfig.json --noEmit
+- name: Run Playwright tests
+  run: npx playwright test</code></pre>
+      <div class="note"><strong>TypeScript 7 angle.</strong> Because the native compiler is ~10× faster, that "Type-check" CI step adds very little wall-clock time — so there's no excuse to drop it for speed. A fast gate is one you keep in the pipeline.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">A note on TS7 defaults</h3>
+      <p>TypeScript 7 starts from modern defaults (we cover these properly in Module 3). For a test project the ones to know are <code>strict</code> on by default and the <code>types</code> array no longer auto-loading every <code>@types</code> package. If a global suddenly reads as "cannot find name," list what you need — most commonly:</p>
+      <pre><code>{
+  "compilerOptions": {
+    "types": ["node"]   <span class="cmt">// plus any others your tests rely on</span>
+  }
+}</code></pre>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>What tsconfig.json is.</strong> It's the file that tells the TypeScript compiler how to treat your project: which files to include, how strict to be, what to emit. The compiler reads it automatically. For a Playwright project it does double duty — <code>tsc</code> reads all of it for the gate, and Playwright reads a few options from it when loading specs.</p>
+
+        <p><strong>baseUrl and paths.</strong> These two let you write tidy imports. <code>baseUrl</code> sets the directory that bare import paths resolve against; <code>paths</code> maps a prefix to a location — so <code>import { LoginPage } from '@pages/LoginPage'</code> can resolve to <code>tests/pages/LoginPage</code> instead of a long relative path. Both are among the few options Playwright actually honours, which is why they're worth knowing as a tester. (Note <code>baseUrl</code> must be set if you use <code>paths</code>.)</p>
+
+        <p><strong>Separate tsconfig per directory.</strong> TypeScript lets each directory have its own <code>tsconfig.json</code>, and a child config can <code>extends</code> a parent to inherit and override settings. A common layout is a root config for shared settings and a <code>tests/tsconfig.json</code> for test-specific preferences. Playwright looks up the closest config to each file, so this layering "just works" for your specs.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: CHECK YOUR KNOWLEDGE ============================================= -->
+  <div class="tabpanel" id="tab-check">
+    <div id="questionsWrap" class="card">
+      <div class="eyebrow">Check your knowledge</div>
+
+      <div class="q">
+        <div class="stem">Q1. What is the recommended way to make type-checking run automatically before your Playwright tests?</div>
+        <label class="opt"><input type="radio" name="q1" value="A">Wire <code>tsc --noEmit</code> as a <code>pretest</code> script so <code>npm test</code> checks types, then runs the tests.</label>
+        <label class="opt"><input type="radio" name="q1" value="B">Pass <code>--typecheck</code> to <code>playwright test</code>.</label>
+        <label class="opt"><input type="radio" name="q1" value="C">There is no way to run them in sequence.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q2. Which <code>tsconfig.json</code> options does Playwright actually honour when it loads your specs?</div>
+        <label class="opt"><input type="radio" name="q2" value="A">All of them, including <code>strict</code> and <code>target</code>.</label>
+        <label class="opt"><input type="radio" name="q2" value="B">Only <code>allowJs</code>, <code>baseUrl</code>, <code>paths</code>, and <code>references</code>; the rest are used by <code>tsc</code> for type-checking.</label>
+        <label class="opt"><input type="radio" name="q2" value="C">None — Playwright ignores tsconfig entirely.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q3. A teammate asks "why didn't Playwright enforce my <code>strict</code> setting at run time?" What's the correct explanation?</div>
+        <label class="opt"><input type="radio" name="q3" value="A">strict is broken in TypeScript 7.</label>
+        <label class="opt"><input type="radio" name="q3" value="B">Playwright doesn't type-check when running; <code>strict</code> governs the <code>tsc --noEmit</code> gate, which is the part that enforces it.</label>
+        <label class="opt"><input type="radio" name="q3" value="C">strict only works in the browser.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q4. Why does typing your page objects and fixtures well matter for a Playwright suite?</div>
+        <label class="opt"><input type="radio" name="q4" value="A">It makes the browser run faster.</label>
+        <label class="opt"><input type="radio" name="q4" value="B">The better-typed your tests are, the more mistakes (wrong method, missing property, bad argument) the <code>tsc</code> gate catches instantly — and TypeScript 7 makes running that check fast enough to do constantly.</label>
+        <label class="opt"><input type="radio" name="q4" value="C">It is required or Playwright will refuse to run.</label>
+      </div>
+
+      <button class="submit-btn" id="submitAnswersBtn" disabled>Submit answers</button>
+      <div class="submit-note" id="submitNote">Select an answer for each question to submit.</div>
+    </div>
+
+    <div id="submittedWrap" class="card hidden">
+      <p>Answers submitted. Review complete — mark this module as complete below.</p>
+    </div>
+
+    <div class="complete-bar disabled" id="completeBar">
+      <input type="checkbox" id="completeCb" disabled>
+      <label for="completeCb" id="completeLabel">Answer all questions to unlock</label>
+      <button class="redo-btn" id="redoBtn">&#x21BA; Redo module</button>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn secondary" href="pw-module-1-ts7-for-playwright.html">← Module 1</a>
+    <a class="nav-btn" href="pw-module-3-adopting-ts7.html">Module 3: Adopting It on Your Suite →</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const EXAMPLE_ID = 'pw-module-2-playwright-in-practice';
+const QIDS = ['q1','q2','q3','q4'];
+const CORRECT = { q1:'A', q2:'B', q3:'B', q4:'B' };
+
+document.getElementById('tabbar').addEventListener('click', function(e){
+  const btn = e.target.closest('.tabbtn'); if(!btn) return;
+  const tab = btn.getAttribute('data-tab');
+  document.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.toggle('active', b===btn); });
+  document.querySelectorAll('.tabpanel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+tab); });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+const _FB_CONFIG = {
+  apiKey: "AIzaSyC-I-IOCq2fCwa471fsD5xOn6SYQSBDp7Q",
+  authDomain: "sfcertification-grafana.firebaseapp.com",
+  projectId: "sfcertification-grafana",
+  storageBucket: "sfcertification-grafana.firebasestorage.app",
+  messagingSenderId: "227322696511",
+  appId: "1:227322696511:web:12e7ced7dd3d45fa06798a"
+};
+if (!window._fbApp) window._fbApp = firebase.initializeApp(_FB_CONFIG);
+const _auth = firebase.auth(window._fbApp);
+window._learnerUid = 'anon'; window._learnerEmail = null;
+
+window.pmLearnerKey = function(exampleId){ return 'pm_learner_' + window._learnerUid + '_' + exampleId; };
+function loadState(){ try { return JSON.parse(localStorage.getItem(window.pmLearnerKey(EXAMPLE_ID))) || {}; } catch(e){ return {}; } }
+function saveState(s){ localStorage.setItem(window.pmLearnerKey(EXAMPLE_ID), JSON.stringify(s)); }
+
+window.pmSignOut = function(){ _auth.signOut(); };
+
+_auth.onAuthStateChanged(function(user){
+  if (user && user.email && user.email.endsWith('@sourcefuse.com')) {
+    window._learnerUid = user.uid; window._learnerEmail = user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    document.dispatchEvent(new Event('learnerReady'));
+  } else if (user && user.email && !user.email.endsWith('@sourcefuse.com')) {
+    _auth.signOut();
+  } else {
+    window.location.href = 'course-map.html';
+  }
+});
+
+document.addEventListener('learnerReady', function() {
+  const state = loadState();
+  cpEnsureModuleStarted();
+
+  const completeCb = document.getElementById('completeCb');
+  if (completeCb) {
+    completeCb.addEventListener('change', function() {
+      if (!completeCb.checked) return;
+      const s = loadState(); s.complete = true; saveState(s);
+      activateCompleteBar(true);
+    });
+  }
+  const redoBtn = document.getElementById('redoBtn');
+  if (redoBtn) redoBtn.addEventListener('click', function() {
+    localStorage.removeItem(window.pmLearnerKey(EXAMPLE_ID));
+    document.getElementById('questionsWrap').classList.remove('hidden');
+    document.getElementById('submittedWrap').classList.add('hidden');
+    document.querySelectorAll('.opt input[type="radio"]').forEach(function(r){ r.checked = false; });
+    document.getElementById('submitAnswersBtn').disabled = true;
+    document.getElementById('submitNote').textContent = 'Select an answer for each question to submit.';
+    activateCompleteBar(false);
+  });
+
+  if (state.complete) { showSubmittedState(); activateCompleteBar(true); return; }
+  if (state.submittedAt) { showSubmittedState(); activateCompleteBar(false); return; }
+
+  document.querySelectorAll('.opt input[type="radio"]').forEach(function(radio){
+    radio.addEventListener('change', checkAllAnswered);
+  });
+  document.getElementById('submitAnswersBtn').addEventListener('click', submitAnswers);
+});
+
+function checkAllAnswered() {
+  const all = QIDS.every(n => document.querySelector('input[name="'+n+'"]:checked'));
+  document.getElementById('submitAnswersBtn').disabled = !all;
+  document.getElementById('submitNote').textContent = all ? 'Ready to submit.' : 'Select an answer for each question to submit.';
+}
+
+function submitAnswers() {
+  const answers = {};
+  QIDS.forEach(function(n){
+    const v = document.querySelector('input[name="'+n+'"]:checked'); if (v) answers[n] = v.value;
+  });
+  let correct = 0;
+  Object.keys(CORRECT).forEach(function(n){ if (answers[n] === CORRECT[n]) correct++; });
+  const s = loadState();
+  s.exampleId = EXAMPLE_ID; s.answers = answers; s.correct = correct;
+  s.submittedAt = new Date().toISOString();
+  saveState(s);
+  showSubmittedState();
+  activateCompleteBar(false);
+}
+
+function showSubmittedState() {
+  document.getElementById('questionsWrap').classList.add('hidden');
+  document.getElementById('submittedWrap').classList.remove('hidden');
+}
+
+function activateCompleteBar(isDone) {
+  const bar = document.getElementById('completeBar');
+  const cb = document.getElementById('completeCb');
+  const label = document.getElementById('completeLabel');
+  const redo = document.getElementById('redoBtn');
+  if (!bar) return;
+  if (isDone) {
+    bar.className = 'complete-bar done';
+    cb.disabled = true; cb.checked = true;
+    label.textContent = '✓ Module complete';
+    if (redo) redo.classList.add('visible');
+    cpWriteModuleComplete();
+  } else {
+    bar.className = 'complete-bar';
+    cb.disabled = false; cb.checked = false;
+    label.textContent = 'Mark module as complete';
+    if (redo) redo.classList.remove('visible');
+  }
+}
+</script>
+
+<!-- ===== SHARED courseProgress v2 wiring (inlined) ========================= -->
+<script>
+var CP_COURSE_ID = 'qAPsB1Cn3WbegUqkhPm3';
+var THIS_MODULE_KEY = EXAMPLE_ID;
+var CP_MODULE_IDS = [
+  'pw-module-1-ts7-for-playwright',
+  'pw-module-2-playwright-in-practice',
+  'pw-module-3-adopting-ts7'
+];
+
+function cpNow() {
+  var d = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  return {
+    date: d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),
+    time: pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()),
+    ms:   d.getTime()
+  };
+}
+function cpFmtDuration(ms) {
+  if (ms == null || ms < 0) return null;
+  var s = Math.floor(ms/1000), h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  if (h > 0) return h+'h '+m+'m '+sec+'s';
+  if (m > 0) return m+'m '+sec+'s';
+  return sec+'s';
+}
+function cpDb() { return firebase.firestore(window._fbApp); }
+function cpDocRef() { return cpDb().collection('courseProgress').doc(window._learnerUid); }
+function cpReady() { return window._fbApp && window._learnerUid && window._learnerUid !== 'anon'; }
+
+function cpEnsureModuleStarted() {
+  if (!cpReady()) return;
+  var ref = cpDocRef();
+  ref.get().then(function(snap){
+    var data = snap.exists ? (snap.data() || {}) : {};
+    var course = (data.courses && data.courses[CP_COURSE_ID]) || {};
+    var mods = course.modules || {};
+    var t = cpNow();
+    var update = { email: window._learnerEmail || null, name: window._learnerEmail || null, courses: {} };
+    update.courses[CP_COURSE_ID] = { moduleInProgress: THIS_MODULE_KEY, modules: {} };
+    if (!mods[THIS_MODULE_KEY] || !mods[THIS_MODULE_KEY].startedOn) {
+      update.courses[CP_COURSE_ID].modules[THIS_MODULE_KEY] = { startedOn: t.date, startedAt: t.time };
+    }
+    if (!course.courseStartedOn) { update.courses[CP_COURSE_ID].courseStartedOn = t.date; update.courses[CP_COURSE_ID].courseStartedAt = t.time; }
+    ref.set(update, { merge: true })
+       .catch(function(e){ console.warn('[courseProgress] start write failed:', e.message); });
+  }).catch(function(e){ console.warn('[courseProgress] start read failed:', e.message); });
+}
+
+function cpWriteModuleComplete() {
+  if (!cpReady()) return;
+  var ref = cpDocRef();
+  ref.get().then(function(snap){
+    var data = snap.exists ? (snap.data() || {}) : {};
+    var course = (data.courses && data.courses[CP_COURSE_ID]) || {};
+    var mods = course.modules || {};
+    var t = cpNow();
+    var startMs = null;
+    var mEntry = mods[THIS_MODULE_KEY];
+    if (mEntry && mEntry.startedOn && mEntry.startedAt) {
+      startMs = new Date(mEntry.startedOn + 'T' + mEntry.startedAt).getTime();
+    }
+    var moduleTimeTaken = startMs != null ? cpFmtDuration(t.ms - startMs) : null;
+
+    var courseUpdate = { modules: {} };
+    var existing = mods[THIS_MODULE_KEY] || {};
+    courseUpdate.modules[THIS_MODULE_KEY] = {
+      completedOn: existing.completedOn || t.date,
+      completedAt: existing.completedAt || t.time,
+      timeTaken:   existing.timeTaken   || moduleTimeTaken
+    };
+    if (course.moduleInProgress === THIS_MODULE_KEY) courseUpdate.moduleInProgress = null;
+
+    var completedCount = 0;
+    CP_MODULE_IDS.forEach(function(id){
+      if (id === THIS_MODULE_KEY) { completedCount++; return; }
+      if (mods[id] && mods[id].completedOn) completedCount++;
+    });
+    if (completedCount >= CP_MODULE_IDS.length && !course.courseCompletedOn) {
+      courseUpdate.courseCompletedOn = t.date;
+      courseUpdate.courseCompletedAt = t.time;
+      if (course.courseStartedOn && course.courseStartedAt) {
+        var cStart = new Date(course.courseStartedOn + 'T' + course.courseStartedAt).getTime();
+        courseUpdate.timeTaken = cpFmtDuration(t.ms - cStart);
+      }
+    }
+    var update = { email: window._learnerEmail || null, name: window._learnerEmail || null, courses: {} };
+    update.courses[CP_COURSE_ID] = courseUpdate;
+    ref.set(update, { merge: true })
+       .catch(function(e){ console.warn('[courseProgress] complete write failed:', e.message); });
+  }).catch(function(e){ console.warn('[courseProgress] complete read failed:', e.message); });
+}
+</script>
+</body>
+</html>
