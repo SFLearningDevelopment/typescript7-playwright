@@ -198,7 +198,47 @@ npx tsc -p tsconfig.json --noEmit
 
 <span class="cmt"># watch mode for local development</span>
 npx tsc -p tsconfig.json --noEmit -w</code></pre>
-      <p>If your specs are clean, you'll get no output (that's success). If there's a type error — a wrong locator method, a missing fixture — <code>tsc</code> reports it now, before any browser opens. Try introducing a deliberate typo in a spec and re-running to see it caught.</p>
+      <p>If your specs are clean, you'll get no output — that's success. Here's a clean spec the gate passes silently:</p>
+      <pre><code><span class="cmt">// tests/login.spec.ts — clean: types line up</span>
+import { test, expect } from '@playwright/test';
+
+test('user sees the dashboard after sign in', async ({ page }) =&gt; {
+  await page.goto('/login');
+  await page.getByLabel('User Name').fill('alice');
+  await page.getByLabel('Password').fill('secret');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await expect(page.getByText('Welcome, alice')).toBeVisible();
+});</code></pre>
+      <pre><code>$ npx tsc --noEmit
+$                       <span class="cmt"># no output, exit code 0 = types are clean</span></code></pre>
+
+      <p>Now introduce a deliberate mistake — a misspelled method (<code>getByRol</code>) and a wrong argument type (a number where a string is expected):</p>
+      <pre><code><span class="cmt">// tests/login.spec.ts — broken on purpose</span>
+import { test, expect } from '@playwright/test';
+
+test('user sees the dashboard after sign in', async ({ page }) =&gt; {
+  await page.goto('/login');
+  await page.getByLabel('User Name').fill(<span class="del">12345</span>);          <span class="cmt">// number, not string</span>
+  await page.getByLabel('Password').fill('secret');
+  await page.<span class="del">getByRol</span>('button', { name: 'Sign in' }).click();  <span class="cmt">// typo</span>
+  await expect(page.getByText('Welcome, alice')).toBeVisible();
+});</code></pre>
+      <p>The gate catches both <em>before any browser opens</em>:</p>
+      <pre><code>$ npx tsc --noEmit
+tests/login.spec.ts:5:39 - error TS2345: Argument of type 'number'
+  is not assignable to parameter of type 'string'.
+
+5   await page.getByLabel('User Name').fill(12345);
+                                            ~~~~~
+
+tests/login.spec.ts:7:14 - error TS2339: Property 'getByRol' does not
+  exist on type 'Page'. Did you mean 'getByRole'?
+
+7   await page.getByRol('button', { name: 'Sign in' }).click();
+               ~~~~~~~~
+
+Found 2 errors in the same file, starting at tests/login.spec.ts:5</code></pre>
+      <div class="note">Without the gate, both mistakes would survive to <code>playwright test</code> — the typo'd method would throw a confusing runtime error minutes into a browser run, and the number argument might coerce silently. TypeScript 7 makes running this check fast enough to do on every save.</div>
     </div>
 
     <div class="card">
@@ -222,6 +262,12 @@ npx tsc -p tsconfig.json --noEmit -w</code></pre>
         <p><strong>What <code>--noEmit</code> means.</strong> Normally a compiler produces output files. <code>--noEmit</code> tells <code>tsc</code> to do all its type-checking but write nothing to disk. For Playwright tests that's precisely what you want: you're using the compiler as a <em>checker</em>, not a build tool, because Playwright already turns your specs into runnable JavaScript on its own. Check, report problems, emit nothing.</p>
 
         <p><strong>The <code>pre</code> script convention.</strong> npm has a small built-in convention: if you have a script named <code>test</code>, a script named <code>pretest</code> runs automatically right before it. That's how a single <code>npm test</code> can first run your type-check and then your Playwright run, in order, with no extra command. It's the standard way teams make "check types, then test" a one-step habit.</p>
+
+        <p><strong>What <code>tsc</code> is.</strong> <code>tsc</code> is the TypeScript <em>compiler</em> — the command-line program that reads your <code>.ts</code> files, checks the types, and (unless you pass <code>--noEmit</code>) writes out JavaScript. When this course says "the gate," it means running <code>tsc --noEmit</code> over your tests. It's a separate tool from Playwright: Playwright runs your tests, <code>tsc</code> checks them. Both happen to read the same <code>tsconfig.json</code>.</p>
+
+        <p><strong>What <code>tsconfig.json</code> is.</strong> It's the configuration file that tells <code>tsc</code> how to treat your project — which files to include, how strict to be, what (if anything) to emit, and how to resolve imports. The compiler picks it up automatically from your project. You'll meet it properly in Module 2, where it turns out Playwright reads only a few of its options while <code>tsc</code> reads all of them. For now, just know it's the dial-box for the type-check gate.</p>
+
+        <p><strong>tsc vs. tsgo — what a tester should know.</strong> You may see the native compiler invoked as <code>tsgo</code> in some preview docs. Here's the whole story: <code>tsgo</code> was the temporary command name used by <em>earlier</em> native-preview builds (the betas and nightlies), to keep it clearly separate from the classic <code>tsc</code> while both could be installed. From the <strong>TypeScript 7.0 RC onward, the native compiler uses the familiar <code>tsc</code> name</strong> — so your scripts and habits carry over unchanged. They are the <em>same compiler</em>; only the command name differed by build phase. Practical rule: use <code>tsc</code>; if you're on an older preview build and <code>tsc</code> isn't found, try <code>tsgo</code>. Nothing about your tests changes either way.</p>
       </div>
     </details>
   </div>
