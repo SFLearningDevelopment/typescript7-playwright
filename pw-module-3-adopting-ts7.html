@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     SF KNOWLEDGE HUB — TypeScript 7 for Playwright — MODULE 3
+     Adopting It on Your Suite
+     moduleKey (EXAMPLE_ID): pw-module-3-adopting-ts7
+     courseId  (CP_COURSE_ID): qAPsB1Cn3WbegUqkhPm3
+     Tabs: Overview / Breaking changes for test projects / Rollout in CI / Check.
+     ============================================================================ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3 — Adopting It on Your Suite — TypeScript 7 for Playwright</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Code+Pro:wght@400;600&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1a6eb5; --blue-dark:#0f4c81; --ink:#1f2933; --muted:#647687;
+    --bg:#eef2f8; --card:#ffffff; --border:#d6e0ee; --green:#16a34a; --coral:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;font-size:17px}
+  .userbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--border);font-size:14px}
+  .signout{padding:8px 16px;border:none;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit}
+  .crumbs{padding:14px 24px;color:var(--muted);font-size:13px}
+  .crumbs a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:860px;margin:0 auto;padding:8px 24px 80px}
+  h1{font-family:'Source Serif 4',Georgia,serif;font-size:30px;margin:8px 0 4px}
+  h3{font-family:'Source Serif 4',Georgia,serif;font-size:19px;margin:22px 0 6px}
+  .eyebrow{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .tag{font-family:'Source Code Pro',monospace;font-size:12px;background:#e3edf9;color:var(--blue-dark);padding:5px 10px;border-radius:14px}
+  .tabbar{display:flex;flex-wrap:wrap;gap:4px;border-bottom:2px solid var(--border);margin:22px 0 0}
+  .tabbtn{appearance:none;border:none;background:none;font-family:inherit;font-size:15px;font-weight:600;color:var(--muted);padding:11px 16px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+  .tabbtn:hover{color:var(--blue)}
+  .tabbtn.active{color:var(--blue-dark);border-bottom-color:var(--blue)}
+  .tabpanel{display:none}
+  .tabpanel.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:.4}to{opacity:1}}
+  .concepts{margin:18px 0}
+  .concept{border:1px solid var(--border);border-radius:12px;margin:10px 0;overflow:hidden;background:var(--card)}
+  .concept summary{cursor:pointer;padding:16px 18px;list-style:none;display:flex;align-items:center;gap:12px}
+  .concept summary::-webkit-details-marker{display:none}
+  .concept .chip{font-family:'Source Code Pro',monospace;font-size:12px;background:#e3edf9;color:var(--blue-dark);padding:5px 10px;border-radius:14px;white-space:nowrap}
+  .concept .headline{font-weight:600;color:var(--ink)}
+  .concept .toggle{margin-left:auto;font-family:'Source Code Pro',monospace;color:var(--blue);font-size:18px;line-height:1}
+  .concept[open] .toggle{transform:rotate(45deg)}
+  .concept .concept-body{padding:0 18px 18px}
+  .concept .concept-body p{margin:12px 0}
+  .concept .concept-body p:first-child{margin-top:4px}
+  .concept .concept-body p:last-child{margin-bottom:0}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin:18px 0}
+  .card p{margin:0 0 12px}
+  .card p:last-child{margin-bottom:0}
+  ul.clean{margin:10px 0;padding-left:22px}
+  ul.clean li{margin:7px 0}
+  code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#eef3f9;padding:2px 6px;border-radius:5px}
+  pre{background:#0f2233;color:#e6edf3;border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:'Source Code Pro',monospace;font-size:14.5px;line-height:1.6;margin:14px 0}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit}
+  .cmt{color:#7d97ad}
+  .add{color:#7ee787}
+  .del{color:#ffa198}
+  .note{border-left:4px solid var(--blue);background:#f4f8fd;border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:15.5px}
+  .note.warn{border-left-color:#d08a1e;background:#fdf7ec}
+  .note strong{color:var(--blue-dark)}
+  table.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+  table.tbl th,table.tbl td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top}
+  table.tbl th{background:#f4f8fd;font-family:'Source Code Pro',monospace;font-size:12.5px;color:var(--blue-dark)}
+  table.tbl td code{background:#eef3f9}
+  .primer{border:1px solid var(--border);border-radius:12px;margin:18px 0;overflow:hidden}
+  .primer summary{cursor:pointer;padding:14px 18px;background:#f4f8fd;font-weight:600;color:var(--blue-dark);list-style:none}
+  .primer summary::-webkit-details-marker{display:none}
+  .primer summary::before{content:'+ ';font-family:'Source Code Pro',monospace}
+  .primer[open] summary::before{content:'– '}
+  .primer .primer-body{padding:0 18px 16px}
+  .primer .primer-body p{margin:12px 0}
+  .q{margin:16px 0}
+  .q .stem{font-weight:600;margin-bottom:8px}
+  .opt{display:block;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer}
+  .opt input{margin-right:10px}
+  .submit-btn{padding:11px 20px;border:none;border-radius:8px;background:var(--blue);color:#fff;font-family:inherit;font-size:15px;cursor:pointer}
+  .submit-btn:disabled{background:#c3d3e6;cursor:not-allowed}
+  .submit-note{font-family:'Source Code Pro',monospace;font-size:13px;color:var(--muted);margin-top:8px}
+  .hidden{display:none}
+  .complete-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);margin-top:22px;padding-top:18px}
+  .complete-bar.disabled{opacity:.5}
+  .complete-bar .redo-btn{margin-left:auto;display:none;border:1px solid var(--border);background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit}
+  .complete-bar .redo-btn.visible{display:inline-block}
+  .complete-bar.done{color:var(--green)}
+  .nav-row{display:flex;justify-content:space-between;margin-top:30px}
+  .nav-btn{padding:12px 18px;border-radius:8px;background:var(--blue);color:#fff;text-decoration:none;font-weight:600}
+  .nav-btn.secondary{background:#fff;color:var(--blue);border:1px solid var(--border)}
+  .advisory{border-left:4px solid #d08a1e;background:#fdf7ec;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:14.5px;color:var(--ink)}
+  .advisory .when{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#a96c12;display:block;margin-bottom:3px}
+  .advisory code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#f5ead2;padding:2px 6px;border-radius:5px}
+  .cert-band{background:linear-gradient(180deg,#f4f8fd,#fff);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:12px;padding:20px 22px;margin:24px 0 6px}
+  .cert-band h3{margin-top:0;color:var(--blue-dark)}
+</style>
+</head>
+<body>
+
+<div class="userbar">
+  <span>Welcome, <span id="userEmail">…</span></span>
+  <button class="signout" onclick="pmSignOut()">Sign out</button>
+</div>
+<div class="crumbs">
+  <a href="course-map.html">Back to course dashboard</a> / Module 3 / Adopting It on Your Suite
+</div>
+
+<div class="wrap">
+  <div class="eyebrow">Module 3</div>
+  <h1>Adopting It on Your Suite</h1>
+  <div class="tags">
+    <span class="tag">breaking changes</span>
+    <span class="tag">CI</span>
+    <span class="tag">coexistence</span>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tabbtn active" data-tab="overview">Overview</button>
+    <button class="tabbtn" data-tab="breaking">Breaking changes</button>
+    <button class="tabbtn" data-tab="rollout">Rollout in CI</button>
+    <button class="tabbtn" data-tab="check">Check your knowledge</button>
+  </div>
+
+  <!-- TAB: OVERVIEW ========================================================= -->
+  <div class="tabpanel active" id="tab-overview">
+    <p style="color:var(--muted);margin:18px 0 4px">You know what TypeScript 7 is and how to use it on your tests. This last module is about adopting it on a real suite without disruption: the few breaking changes a test project actually meets, and how to bring it into CI safely alongside your existing setup. Open each idea.</p>
+
+    <div class="concepts">
+      <details class="concept" open>
+        <summary>
+          <span class="chip">low risk</span>
+          <span class="headline">For a test suite, the risk is low</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>Here's the reassuring part. A test project doesn't ship production JavaScript — you use TypeScript only to <em>check</em> your specs, and Playwright does the running. So the riskiest part of a TypeScript 7 migration for application teams (changes to how production code is emitted) simply doesn't apply to you. What's left is a short list of breaking changes that affect type-checking, and they're easy to handle.</p>
+          <p>Because the type-checking behaviour itself is unchanged from the previous version, a test suite that type-checks cleanly today should type-check cleanly on TypeScript 7 — once you've reconciled a couple of changed defaults. That's the whole migration for most Playwright projects.</p>
+        </div>
+      </details>
+
+      <details class="concept">
+        <summary>
+          <span class="chip">two changes</span>
+          <span class="headline">Two defaults are the ones you'll meet</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>TypeScript 7 starts from modern defaults. For a Playwright project, two are worth knowing because they're the ones likely to produce an error on first run: <strong><code>strict</code> is on by default</strong>, and the <strong><code>types</code> array no longer auto-loads every <code>@types</code> package</strong>. Both have simple, explicit fixes, covered in the next tab.</p>
+          <p>Most other breaking changes (dropped legacy module formats, old resolution modes) rarely touch a modern Playwright setup, which already uses current settings. So you're reconciling a couple of things, not rewriting a config.</p>
+        </div>
+      </details>
+
+      <details class="concept">
+        <summary>
+          <span class="chip">safe rollout</span>
+          <span class="headline">Introduce it beside what you have</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>The safe way to adopt is the same parallel-change discipline good teams use for any tooling switch: add TypeScript 7 <em>alongside</em> your current compiler, prove they agree, then switch. In practice that means an informational 7.0 type-check job in CI next to your existing one, the native preview extension for whoever wants faster editing, and side-by-side install so nothing breaks if you need to fall back.</p>
+          <p>Nothing here is risky or irreversible — which is exactly why a test suite is a great place to adopt TypeScript 7 early. The Rollout tab gives you the concrete steps.</p>
+        </div>
+      </details>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>What "breaking change" and "default" mean.</strong> A <strong>breaking change</strong> is a change that can make something which used to work stop working — here, a project that compiled before might now report an error. A <strong>default</strong> is the value a setting takes when you don't specify it. Most of TypeScript 7's "breaking changes" for testers are really <em>changed defaults</em>: the compiler now assumes a different value than before when your <code>tsconfig</code> stays silent. The fix is almost always to state the value you want explicitly — and explicit settings are immune to default changes.</p>
+
+        <p><strong>What <code>strict</code> is.</strong> <code>strict</code> is an umbrella setting that turns on a family of stricter type checks at once — most notably catching values that might be <code>null</code>/<code>undefined</code> and flagging variables whose type the compiler couldn't infer (implicit <code>any</code>). Good test code usually already satisfies it; if turning it on surfaces errors, each one is a real "this might be undefined" worth fixing. You can also opt back out with <code>"strict": false</code> while you work through them.</p>
+
+        <p><strong>What <code>@types</code> packages are.</strong> Many JavaScript libraries ship their type information separately, in packages under the <code>@types/</code> scope (for example <code>@types/node</code> gives you types for Node.js built-ins). Older TypeScript auto-loaded all of them into global scope; TypeScript 7 doesn't, so you list the ones your tests actually use via the <code>types</code> option. That's why a global that "just worked" before might need <code>@types/node</code> named explicitly now.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: BREAKING CHANGES =============================================== -->
+  <div class="tabpanel" id="tab-breaking">
+    <div class="advisory">
+      <span class="when">Accurate as of June 2026</span>
+      The defaults below track the TypeScript 7.0 RC (inherited from 6.0). Verify against the official TypeScript release notes if a specific value differs.
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">The two you'll actually meet</h3>
+      <table class="tbl">
+        <tr><th>Change</th><th>What you might see</th><th>Fix</th></tr>
+        <tr><td><code>strict</code> on by default</td><td>New errors about possibly-null values or implicit <code>any</code> in specs/helpers.</td><td>Fix the flagged spots, or set <code>"strict": false</code> while you migrate.</td></tr>
+        <tr><td><code>types: []</code> by default</td><td>"Cannot find name 'process'" or similar global-not-found errors.</td><td>List the global type packages you use, e.g. <code>"types": ["node"]</code>.</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0"><code>strict</code> on by default</h3>
+      <p>If your tests project never set <code>strict</code>, TypeScript 7 now enables it. You'll see errors like "Object is possibly 'undefined'" where a locator or fixture result might not exist. These are real — handle the missing case:</p>
+      <pre><code><span class="cmt">// strictNullChecks flags this:</span>
+const row = page.getByRole('row').first();
+<span class="del">const text = (await row.textContent()).trim();</span>   <span class="cmt">// textContent() may be null</span>
+<span class="add">const text = (await row.textContent() ?? '').trim();</span> <span class="cmt">// handle null</span></code></pre>
+      <p>If your suite has many such spots and you want to land the migration first, opt out explicitly and tighten later:</p>
+      <pre><code>{
+  "compilerOptions": {
+    "strict": false   <span class="cmt">// temporary; re-enable and fix incrementally</span>
+  }
+}</code></pre>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0"><code>types</code> no longer auto-loads <code>@types</code></h3>
+      <p>Previously every <code>@types/*</code> package in <code>node_modules</code> was loaded into global scope automatically. TypeScript 7 loads none by default, so a global like <code>process</code> (from Node) can suddenly read as undefined. Name what you depend on:</p>
+      <pre><code>{
+  "compilerOptions": {
+    "types": ["node"]   <span class="cmt">// add others your tests use, e.g. a custom global</span>
+  }
+}</code></pre>
+      <div class="note">Playwright's own types come from <code>@playwright/test</code>, which you <em>import</em> directly (<code>import { test } from '@playwright/test'</code>) rather than relying on global auto-loading — so Playwright's types are unaffected by this change. It's mainly ambient globals like Node's that need listing.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">The "is my project ready?" check</h3>
+      <p>The simplest readiness test: get your suite type-checking cleanly under your current compiler first, with <code>strict</code> explicitly set the way you want and no deprecated options. If it's clean there, TypeScript 7 should agree. Run the gate and confirm:</p>
+      <pre><code>npx tsc -p tests/tsconfig.json --noEmit</code></pre>
+      <p>A clean result here means the move to TypeScript 7 is essentially just installing the faster compiler.</p>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>strictNullChecks, in plain terms.</strong> Part of the <code>strict</code> family, this check stops <code>null</code> and <code>undefined</code> from being silently treated as valid for every type. In tests this shows up a lot, because many Playwright calls can legitimately return "nothing found" — <code>textContent()</code> can be <code>null</code>, a <code>.first()</code> match might not exist. The check forces you to handle that case (with <code>??</code>, an <code>if</code>, or an assertion), which is exactly the kind of bug that otherwise produces a confusing runtime failure mid-test.</p>
+
+        <p><strong>The nullish-coalescing operator <code>??</code>.</strong> <code>a ?? b</code> evaluates to <code>a</code> unless <code>a</code> is <code>null</code> or <code>undefined</code>, in which case it gives <code>b</code>. It's the tidy way to supply a fallback: <code>(await row.textContent() ?? '')</code> means "the text, or an empty string if there wasn't any." It's the most common one-character-pair fix you'll apply when turning on strict checks.</p>
+
+        <p><strong>Ambient globals vs. imported types.</strong> Some types are <em>imported</em> where you use them (<code>import { Page } from '@playwright/test'</code>) — these are unaffected by the <code>types</code> default because you name them at the point of use. Others are <em>ambient globals</em>: names available everywhere without import, like <code>process</code> or <code>console</code>'s richer Node typings, supplied by an <code>@types</code> package. The <code>types</code> array controls which ambient global packages load — so it's globals, not your imports, that the new default affects.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: ROLLOUT IN CI =================================================== -->
+  <div class="tabpanel" id="tab-rollout">
+    <div class="advisory">
+      <span class="when">Accurate as of June 2026</span>
+      Package and binary names below track the TypeScript 7.0 RC. Confirm against the official TypeScript 7.0 notes and the <code>@typescript/native-preview</code> npm page before a real cutover.
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Step 1 — Install side by side</h3>
+      <p>Add the native preview alongside your existing TypeScript so nothing breaks and you can compare:</p>
+      <pre><code><span class="cmt"># your current compiler stays…</span>
+npm install -D typescript
+<span class="cmt"># …and the native preview joins it</span>
+npm install -D @typescript/native-preview</code></pre>
+      <p>They install together without conflict. You now have both compilers available in the project.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Step 2 — Add an informational 7.0 gate in CI</h3>
+      <p>Don't replace your existing check — add a 7.0 type-check job <em>next to</em> it, marked non-blocking at first, so it reports on real specs without failing the pipeline:</p>
+      <pre><code><span class="cmt"># GitHub Actions (sketch)</span>
+- name: Type-check (current — authoritative)
+  run: npx tsc -p tests/tsconfig.json --noEmit
+
+- name: Type-check (TS7 — informational)
+  run: npx tsc -p tests/tsconfig.json --noEmit
+  continue-on-error: true      <span class="cmt"># non-blocking while you build trust</span>
+
+- name: Run Playwright tests
+  run: npx playwright test</code></pre>
+      <p>Watch the informational job across a few weeks of real commits. When it consistently agrees with your current check, it has earned trust.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Step 3 — Let editors opt in</h3>
+      <p>Have a few testers install the <strong>TypeScript Native Preview</strong> extension for VS Code and use it day-to-day. The editor is where the speed is most felt on a big suite, and it's zero-risk: it changes how fast the editor responds, not what gets committed or run. Collect any feedback on behaviour differences.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Step 4 — Make 7.0 the gate</h3>
+      <p>Once the informational job has agreed for a while, promote it: make TypeScript 7 the authoritative type-check, drop the <code>continue-on-error</code>, and point your local <code>pretest</code> at it. Keep your previous compiler installed as a fallback. Your suite now gets the fast gate everywhere:</p>
+      <pre><code>{
+  "scripts": {
+    "pretest": "tsc -p tests/tsconfig.json --noEmit",   <span class="cmt">// now TS7</span>
+    "test": "playwright test"
+  }
+}</code></pre>
+      <div class="note"><strong>Why this order works.</strong> Every step is reversible and low-stakes: the informational job can't break your pipeline, the editor change affects nobody downstream, and the previous compiler stays available. You prove agreement before you depend on it — the same parallel-change discipline that makes any tooling switch calm.</div>
+    </div>
+
+    <div class="cert-band">
+      <h3>You're ready for the certification</h3>
+      <p style="margin-bottom:0">You can now install and run TypeScript 7 on a Playwright project, type your tests so the gate catches mistakes, reconcile the breaking changes a test suite meets, and roll it out in CI without disruption. Mark this module complete, then take the <strong>SF Certified TypeScript 7 for Playwright Practitioner</strong> exam from the course dashboard.</p>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>What CI is, for a tester.</strong> <strong>Continuous integration (CI)</strong> is the automated system — GitHub Actions, GitLab CI, Jenkins — that runs your checks and tests on a clean server every time code is pushed. For test automation it's home turf: it's where your Playwright suite already runs on every change. Adding a type-check step there means every push is gated on clean types before the (slower) browser tests run, catching type mistakes in seconds instead of minutes.</p>
+
+        <p><strong>What "non-blocking" / <code>continue-on-error</code> means.</strong> A CI step can be set so that even if it fails, the overall pipeline still passes — it reports a result without gating anything. That's the safe way to trial a new tool: run the TypeScript 7 check as non-blocking, watch whether it ever disagrees with your trusted check, and only make it blocking once you're confident. It's a trial run with no consequences.</p>
+
+        <p><strong>Why "side by side, then switch" is the safe pattern.</strong> Installing the new compiler next to the old one — rather than replacing it — means you always have a known-good fallback and can compare the two on identical code. You switch only after they've agreed across real commits. This parallel-change approach is why adopting a brand-new compiler on your suite can be low-drama: at no point are you betting the pipeline on something unproven.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: CHECK YOUR KNOWLEDGE ============================================= -->
+  <div class="tabpanel" id="tab-check">
+    <div id="questionsWrap" class="card">
+      <div class="eyebrow">Check your knowledge</div>
+
+      <div class="q">
+        <div class="stem">Q1. Why is adopting TypeScript 7 lower-risk for a test suite than for an application that ships code?</div>
+        <label class="opt"><input type="radio" name="q1" value="A">Test suites don't use TypeScript at all.</label>
+        <label class="opt"><input type="radio" name="q1" value="B">A test project only uses TypeScript to check specs (Playwright does the running), so the risky production-emit changes don't apply.</label>
+        <label class="opt"><input type="radio" name="q1" value="C">TypeScript 7 disables breaking changes for tests automatically.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q2. Which two changed defaults is a Playwright project most likely to meet on TypeScript 7?</div>
+        <label class="opt"><input type="radio" name="q2" value="A"><code>strict</code> on by default, and <code>types</code> no longer auto-loading every <code>@types</code> package.</label>
+        <label class="opt"><input type="radio" name="q2" value="B"><code>outDir</code> and <code>incremental</code>.</label>
+        <label class="opt"><input type="radio" name="q2" value="C"><code>noEmit</code> and <code>watch</code>.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q3. After upgrading, a spec errors with "Cannot find name 'process'." What's the fix?</div>
+        <label class="opt"><input type="radio" name="q3" value="A">Reinstall Playwright.</label>
+        <label class="opt"><input type="radio" name="q3" value="B">List the global type package you depend on, e.g. <code>"types": ["node"]</code>, since 7.0 no longer auto-loads <code>@types</code>.</label>
+        <label class="opt"><input type="radio" name="q3" value="C">Switch the test to JavaScript.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q4. What is the safest way to bring TypeScript 7 into your CI pipeline?</div>
+        <label class="opt"><input type="radio" name="q4" value="A">Immediately replace the existing type-check and remove the old compiler.</label>
+        <label class="opt"><input type="radio" name="q4" value="B">Add a non-blocking (informational) 7.0 type-check job beside the existing one, confirm they agree over real commits, then promote it.</label>
+        <label class="opt"><input type="radio" name="q4" value="C">Only run TypeScript 7 on a developer's laptop, never in CI.</label>
+      </div>
+
+      <button class="submit-btn" id="submitAnswersBtn" disabled>Submit answers</button>
+      <div class="submit-note" id="submitNote">Select an answer for each question to submit.</div>
+    </div>
+
+    <div id="submittedWrap" class="card hidden">
+      <p>Answers submitted. Review complete — mark this module as complete below, then take the certification exam from the dashboard.</p>
+    </div>
+
+    <div class="complete-bar disabled" id="completeBar">
+      <input type="checkbox" id="completeCb" disabled>
+      <label for="completeCb" id="completeLabel">Answer all questions to unlock</label>
+      <button class="redo-btn" id="redoBtn">&#x21BA; Redo module</button>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn secondary" href="pw-module-2-playwright-in-practice.html">← Module 2</a>
+    <a class="nav-btn" href="course-map.html">Back to dashboard →</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const EXAMPLE_ID = 'pw-module-3-adopting-ts7';
+const QIDS = ['q1','q2','q3','q4'];
+const CORRECT = { q1:'B', q2:'A', q3:'B', q4:'B' };
+
+document.getElementById('tabbar').addEventListener('click', function(e){
+  const btn = e.target.closest('.tabbtn'); if(!btn) return;
+  const tab = btn.getAttribute('data-tab');
+  document.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.toggle('active', b===btn); });
+  document.querySelectorAll('.tabpanel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+tab); });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+const _FB_CONFIG = {
+  apiKey: "AIzaSyC-I-IOCq2fCwa471fsD5xOn6SYQSBDp7Q",
+  authDomain: "sfcertification-grafana.firebaseapp.com",
+  projectId: "sfcertification-grafana",
+  storageBucket: "sfcertification-grafana.firebasestorage.app",
+  messagingSenderId: "227322696511",
+  appId: "1:227322696511:web:12e7ced7dd3d45fa06798a"
+};
+if (!window._fbApp) window._fbApp = firebase.initializeApp(_FB_CONFIG);
+const _auth = firebase.auth(window._fbApp);
+window._learnerUid = 'anon'; window._learnerEmail = null;
+
+window.pmLearnerKey = function(exampleId){ return 'pm_learner_' + window._learnerUid + '_' + exampleId; };
+function loadState(){ try { return JSON.parse(localStorage.getItem(window.pmLearnerKey(EXAMPLE_ID))) || {}; } catch(e){ return {}; } }
+function saveState(s){ localStorage.setItem(window.pmLearnerKey(EXAMPLE_ID), JSON.stringify(s)); }
+
+window.pmSignOut = function(){ _auth.signOut(); };
+
+_auth.onAuthStateChanged(function(user){
+  if (user && user.email && user.email.endsWith('@sourcefuse.com')) {
+    window._learnerUid = user.uid; window._learnerEmail = user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    document.dispatchEvent(new Event('learnerReady'));
+  } else if (user && user.email && !user.email.endsWith('@sourcefuse.com')) {
+    _auth.signOut();
+  } else {
+    window.location.href = 'course-map.html';
+  }
+});
+
+document.addEventListener('learnerReady', function() {
+  const state = loadState();
+  cpEnsureModuleStarted();
+
+  const completeCb = document.getElementById('completeCb');
+  if (completeCb) {
+    completeCb.addEventListener('change', function() {
+      if (!completeCb.checked) return;
+      const s = loadState(); s.complete = true; saveState(s);
+      activateCompleteBar(true);
+    });
+  }
+  const redoBtn = document.getElementById('redoBtn');
+  if (redoBtn) redoBtn.addEventListener('click', function() {
+    localStorage.removeItem(window.pmLearnerKey(EXAMPLE_ID));
+    document.getElementById('questionsWrap').classList.remove('hidden');
+    document.getElementById('submittedWrap').classList.add('hidden');
+    document.querySelectorAll('.opt input[type="radio"]').forEach(function(r){ r.checked = false; });
+    document.getElementById('submitAnswersBtn').disabled = true;
+    document.getElementById('submitNote').textContent = 'Select an answer for each question to submit.';
+    activateCompleteBar(false);
+  });
+
+  if (state.complete) { showSubmittedState(); activateCompleteBar(true); return; }
+  if (state.submittedAt) { showSubmittedState(); activateCompleteBar(false); return; }
+
+  document.querySelectorAll('.opt input[type="radio"]').forEach(function(radio){
+    radio.addEventListener('change', checkAllAnswered);
+  });
+  document.getElementById('submitAnswersBtn').addEventListener('click', submitAnswers);
+});
+
+function checkAllAnswered() {
+  const all = QIDS.every(n => document.querySelector('input[name="'+n+'"]:checked'));
+  document.getElementById('submitAnswersBtn').disabled = !all;
+  document.getElementById('submitNote').textContent = all ? 'Ready to submit.' : 'Select an answer for each question to submit.';
+}
+
+function submitAnswers() {
+  const answers = {};
+  QIDS.forEach(function(n){
+    const v = document.querySelector('input[name="'+n+'"]:checked'); if (v) answers[n] = v.value;
+  });
+  let correct = 0;
+  Object.keys(CORRECT).forEach(function(n){ if (answers[n] === CORRECT[n]) correct++; });
+  const s = loadState();
+  s.exampleId = EXAMPLE_ID; s.answers = answers; s.correct = correct;
+  s.submittedAt = new Date().toISOString();
+  saveState(s);
+  showSubmittedState();
+  activateCompleteBar(false);
+}
+
+function showSubmittedState() {
+  document.getElementById('questionsWrap').classList.add('hidden');
+  document.getElementById('submittedWrap').classList.remove('hidden');
+}
+
+function activateCompleteBar(isDone) {
+  const bar = document.getElementById('completeBar');
+  const cb = document.getElementById('completeCb');
+  const label = document.getElementById('completeLabel');
+  const redo = document.getElementById('redoBtn');
+  if (!bar) return;
+  if (isDone) {
+    bar.className = 'complete-bar done';
+    cb.disabled = true; cb.checked = true;
+    label.textContent = '✓ Module complete';
+    if (redo) redo.classList.add('visible');
+    cpWriteModuleComplete();
+  } else {
+    bar.className = 'complete-bar';
+    cb.disabled = false; cb.checked = false;
+    label.textContent = 'Mark module as complete';
+    if (redo) redo.classList.remove('visible');
+  }
+}
+</script>
+
+<!-- ===== SHARED courseProgress v2 wiring (inlined) ========================= -->
+<script>
+var CP_COURSE_ID = 'qAPsB1Cn3WbegUqkhPm3';
+var THIS_MODULE_KEY = EXAMPLE_ID;
+var CP_MODULE_IDS = [
+  'pw-module-1-ts7-for-playwright',
+  'pw-module-2-playwright-in-practice',
+  'pw-module-3-adopting-ts7'
+];
+
+function cpNow() {
+  var d = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  return {
+    date: d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),
+    time: pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()),
+    ms:   d.getTime()
+  };
+}
+function cpFmtDuration(ms) {
+  if (ms == null || ms < 0) return null;
+  var s = Math.floor(ms/1000), h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  if (h > 0) return h+'h '+m+'m '+sec+'s';
+  if (m > 0) return m+'m '+sec+'s';
+  return sec+'s';
+}
+function cpDb() { return firebase.firestore(window._fbApp); }
+function cpDocRef() { return cpDb().collection('courseProgress').doc(window._learnerUid); }
+function cpReady() { return window._fbApp && window._learnerUid && window._learnerUid !== 'anon'; }
+
+function cpEnsureModuleStarted() {
+  if (!cpReady()) return;
+  var ref = cpDocRef();
+  ref.get().then(function(snap){
+    var data = snap.exists ? (snap.data() || {}) : {};
+    var course = (data.courses && data.courses[CP_COURSE_ID]) || {};
+    var mods = course.modules || {};
+    var t = cpNow();
+    var update = { email: window._learnerEmail || null, name: window._learnerEmail || null, courses: {} };
+    update.courses[CP_COURSE_ID] = { moduleInProgress: THIS_MODULE_KEY, modules: {} };
+    if (!mods[THIS_MODULE_KEY] || !mods[THIS_MODULE_KEY].startedOn) {
+      update.courses[CP_COURSE_ID].modules[THIS_MODULE_KEY] = { startedOn: t.date, startedAt: t.time };
+    }
+    if (!course.courseStartedOn) { update.courses[CP_COURSE_ID].courseStartedOn = t.date; update.courses[CP_COURSE_ID].courseStartedAt = t.time; }
+    ref.set(update, { merge: true })
+       .catch(function(e){ console.warn('[courseProgress] start write failed:', e.message); });
+  }).catch(function(e){ console.warn('[courseProgress] start read failed:', e.message); });
+}
+
+function cpWriteModuleComplete() {
+  if (!cpReady()) return;
+  var ref = cpDocRef();
+  ref.get().then(function(snap){
+    var data = snap.exists ? (snap.data() || {}) : {};
+    var course = (data.courses && data.courses[CP_COURSE_ID]) || {};
+    var mods = course.modules || {};
+    var t = cpNow();
+    var startMs = null;
+    var mEntry = mods[THIS_MODULE_KEY];
+    if (mEntry && mEntry.startedOn && mEntry.startedAt) {
+      startMs = new Date(mEntry.startedOn + 'T' + mEntry.startedAt).getTime();
+    }
+    var moduleTimeTaken = startMs != null ? cpFmtDuration(t.ms - startMs) : null;
+
+    var courseUpdate = { modules: {} };
+    var existing = mods[THIS_MODULE_KEY] || {};
+    courseUpdate.modules[THIS_MODULE_KEY] = {
+      completedOn: existing.completedOn || t.date,
+      completedAt: existing.completedAt || t.time,
+      timeTaken:   existing.timeTaken   || moduleTimeTaken
+    };
+    if (course.moduleInProgress === THIS_MODULE_KEY) courseUpdate.moduleInProgress = null;
+
+    var completedCount = 0;
+    CP_MODULE_IDS.forEach(function(id){
+      if (id === THIS_MODULE_KEY) { completedCount++; return; }
+      if (mods[id] && mods[id].completedOn) completedCount++;
+    });
+    if (completedCount >= CP_MODULE_IDS.length && !course.courseCompletedOn) {
+      courseUpdate.courseCompletedOn = t.date;
+      courseUpdate.courseCompletedAt = t.time;
+      if (course.courseStartedOn && course.courseStartedAt) {
+        var cStart = new Date(course.courseStartedOn + 'T' + course.courseStartedAt).getTime();
+        courseUpdate.timeTaken = cpFmtDuration(t.ms - cStart);
+      }
+    }
+    var update = { email: window._learnerEmail || null, name: window._learnerEmail || null, courses: {} };
+    update.courses[CP_COURSE_ID] = courseUpdate;
+    ref.set(update, { merge: true })
+       .catch(function(e){ console.warn('[courseProgress] complete write failed:', e.message); });
+  }).catch(function(e){ console.warn('[courseProgress] complete read failed:', e.message); });
+}
+</script>
+</body>
+</html>
