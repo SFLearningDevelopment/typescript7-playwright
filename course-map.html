@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     SF KNOWLEDGE HUB — TypeScript 7 for Playwright — DASHBOARD / COURSE MAP
+     Type 1 (practice) pattern, 3-module testers' course.
+     Standalone repo: all links relative within this folder.
+     courseId (CP_COURSE_ID): qAPsB1Cn3WbegUqkhPm3
+     Gates the certification exam until all 3 modules are complete.
+     ============================================================================ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeScript 7 for Playwright — SF Knowledge Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Code+Pro:wght@400;600&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--blue:#1a6eb5;--blue-dark:#0f4c81;--ink:#1f2933;--muted:#647687;--bg:#eef2f8;--card:#fff;--border:#d6e0ee;--green:#16a34a}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;font-size:17px}
+  .userbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--border);font-size:14px}
+  .signout{padding:8px 16px;border:none;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit}
+  .wrap{max-width:900px;margin:0 auto;padding:24px}
+  h1{font-family:'Source Serif 4',Georgia,serif;font-size:34px;margin:6px 0}
+  .eyebrow{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+  .lede{color:var(--muted)}
+  .advisory{border-left:4px solid #d08a1e;background:#fdf7ec;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:14.5px;color:var(--ink)}
+  .advisory .when{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#a96c12;display:block;margin-bottom:3px}
+  .advisory code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#f5ead2;padding:2px 6px;border-radius:5px}
+  .progress{margin:14px 0;font-family:'Source Code Pro',monospace;color:var(--muted)}
+  .tier{margin-top:28px}
+  .tier h2{font-size:18px}
+  .ex{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:10px 0}
+  .ex .label{display:flex;flex-direction:column}
+  .ex a{color:var(--blue);text-decoration:none;font-weight:600}
+  .ex .sub{font-size:14.5px;color:var(--muted)}
+  .ex .status{font-family:'Source Code Pro',monospace;font-size:13px;color:var(--muted);white-space:nowrap;margin-left:14px}
+  .ex .status.done{color:var(--green)}
+  .cert-card{background:var(--card);border-left:4px solid var(--blue);border:1px solid var(--border);border-radius:12px;padding:22px;margin-top:30px;opacity:.55}
+  .cert-card.unlocked{opacity:1}
+  .cert-card a{color:var(--blue);font-weight:700;text-decoration:none}
+  #authPanel{max-width:360px;margin:60px auto;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px}
+  #authPanel input{width:100%;padding:10px;margin:6px 0;border:1px solid var(--border);border-radius:8px;font-family:inherit}
+  #authPanel button{width:100%;padding:11px;border:none;border-radius:8px;background:var(--blue);color:#fff;font-family:inherit;cursor:pointer;margin-top:8px}
+  #authPanel hr{border:none;border-top:1px solid var(--border);margin:16px 0}
+  .hidden{display:none}
+  .err{color:#c0392b;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<div class="userbar">
+  <span>Welcome, <span id="userEmail">…</span></span>
+  <button class="signout" onclick="pmSignOut()">Sign out</button>
+</div>
+
+<!-- AUTH PANEL -->
+<div id="authPanel">
+  <div class="eyebrow">Sign in</div>
+  <h1 style="font-size:22px">TypeScript 7 for Playwright</h1>
+  <button onclick="pmGoogleSignIn()">Sign in with Google</button>
+  <hr>
+  <input id="pm-ep-email" type="email" placeholder="you@sourcefuse.com">
+  <input id="pm-ep-password" type="password" placeholder="Password">
+  <button onclick="pmEmailSignIn()">Sign in with email</button>
+  <div class="err hidden" id="authError"></div>
+</div>
+
+<!-- COURSE CONTENT -->
+<div class="wrap hidden" id="courseWrap">
+  <div class="eyebrow">Course map · Test Automation</div>
+  <h1>TypeScript 7 for Playwright</h1>
+  <p class="lede">A short, practical course for automation testers who write Playwright tests in TypeScript. TypeScript 7 rebuilt the compiler to run as native code — roughly 10× faster, with the same type-checking behaviour. Because Playwright doesn't type-check your specs when it runs them, the separate <code>tsc --noEmit</code> gate you run is exactly where that speed lands. This course shows what changes for your suite, what to type, and how to adopt it without disrupting your existing runs.</p>
+  <p class="lede" style="margin-top:6px">Leads to the <strong>SF Certified TypeScript 7 for Playwright Practitioner</strong> certification.</p>
+
+  <div class="advisory">
+    <span class="when">Accurate as of June 2026</span>
+    TypeScript 7 is in its release-candidate period, and the install commands, package names, and binary names shown in this course track a preview that is still moving. If a command doesn't behave as described, check the current instructions on the official TypeScript site and the <code>@typescript/native-preview</code> npm page before troubleshooting further.
+  </div>
+
+  <div class="progress" id="progressLine">0 of 3 complete</div>
+
+  <div class="tier">
+    <h2>The three modules</h2>
+
+    <div class="ex" data-example="pw-module-1-ts7-for-playwright">
+      <div class="label">
+        <a href="pw-module-1-ts7-for-playwright.html">Module 1 — TypeScript 7 for Playwright Testers</a>
+        <span class="sub">The native compiler, framed for test suites; why Playwright leaves type-checking to a separate fast <code>tsc</code>; install and first type-check.</span>
+      </div>
+      <span class="status">Not started</span>
+    </div>
+
+    <div class="ex" data-example="pw-module-2-playwright-in-practice">
+      <div class="label">
+        <a href="pw-module-2-playwright-in-practice.html">Module 2 — Playwright on TypeScript 7 in Practice</a>
+        <span class="sub">The pretest type-check + watch pattern, the tsconfig options Playwright actually honours, and typing page objects, fixtures, and test data.</span>
+      </div>
+      <span class="status">Not started</span>
+    </div>
+
+    <div class="ex" data-example="pw-module-3-adopting-ts7">
+      <div class="label">
+        <a href="pw-module-3-adopting-ts7.html">Module 3 — Adopting It on Your Suite</a>
+        <span class="sub">The few breaking changes a test project meets, running 7.0 as a non-blocking CI check, and side-by-side coexistence with your tooling.</span>
+      </div>
+      <span class="status">Not started</span>
+    </div>
+  </div>
+
+  <div class="cert-card" id="certCard">
+    <div class="eyebrow">Certification</div>
+    <h2>SF Certified TypeScript 7 for Playwright Practitioner</h2>
+    <p>Complete all three modules, then take the certification exam.</p>
+    <a href="certification-test.html" id="certLink">Start the certification exam →</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const _FB_CONFIG = {
+  apiKey:"AIzaSyC-I-IOCq2fCwa471fsD5xOn6SYQSBDp7Q", authDomain:"sfcertification-grafana.firebaseapp.com",
+  projectId:"sfcertification-grafana", storageBucket:"sfcertification-grafana.firebasestorage.app",
+  messagingSenderId:"227322696511", appId:"1:227322696511:web:12e7ced7dd3d45fa06798a"
+};
+if (!window._fbApp) window._fbApp = firebase.initializeApp(_FB_CONFIG);
+const _auth = firebase.auth(window._fbApp);
+window._learnerUid='anon'; window._learnerEmail=null;
+
+const EXAMPLE_IDS = [
+  'pw-module-1-ts7-for-playwright',
+  'pw-module-2-playwright-in-practice',
+  'pw-module-3-adopting-ts7'
+];
+
+window.pmSignOut = function(){ _auth.signOut(); };
+window.pmGoogleSignIn = function(){
+  const p = new firebase.auth.GoogleAuthProvider();
+  p.setCustomParameters({ hd:'sourcefuse.com' });
+  _auth.signInWithPopup(p).catch(function(e){ showErr(e.message); });
+};
+window.pmEmailSignIn = function(){
+  const email=(document.getElementById('pm-ep-email').value||'').trim().toLowerCase();
+  const pwd=document.getElementById('pm-ep-password').value||'';
+  if(!email||!pwd){ showErr('Enter email and password.'); return; }
+  if(!email.endsWith('@sourcefuse.com')){ showErr('Only @sourcefuse.com accounts are allowed.'); return; }
+  _auth.signInWithEmailAndPassword(email,pwd).catch(function(e){ showErr(e.message); });
+};
+function showErr(m){ const e=document.getElementById('authError'); e.textContent=m; e.classList.remove('hidden'); }
+
+_auth.onAuthStateChanged(function(user){
+  if (user && user.email && user.email.endsWith('@sourcefuse.com')) {
+    window._learnerUid=user.uid; window._learnerEmail=user.email;
+    document.getElementById('userEmail').textContent=user.email;
+    document.getElementById('authPanel').classList.add('hidden');
+    document.getElementById('courseWrap').classList.remove('hidden');
+    renderProgress();
+  } else if (user && user.email) { _auth.signOut(); }
+  else { document.getElementById('authPanel').classList.remove('hidden'); document.getElementById('courseWrap').classList.add('hidden'); }
+});
+
+function exComplete(id){
+  try { const s=JSON.parse(localStorage.getItem('pm_learner_'+window._learnerUid+'_'+id)); return !!(s && s.complete===true); }
+  catch(e){ return false; }
+}
+function renderProgress(){
+  let done=0;
+  document.querySelectorAll('.ex').forEach(function(row){
+    const id=row.getAttribute('data-example');
+    const st=row.querySelector('.status');
+    if (exComplete(id)) { st.textContent='✓ Complete'; st.classList.add('done'); done++; }
+    else { st.textContent='Not started'; st.classList.remove('done'); }
+  });
+  document.getElementById('progressLine').textContent = done+' of '+EXAMPLE_IDS.length+' complete';
+  const allDone = done>=EXAMPLE_IDS.length && EXAMPLE_IDS.length>0;
+  const card=document.getElementById('certCard'), link=document.getElementById('certLink');
+  if (allDone){ card.classList.add('unlocked'); link.style.pointerEvents='auto'; }
+  else { card.classList.remove('unlocked'); link.style.pointerEvents='none'; }
+}
+</script>
+</body>
+</html>
