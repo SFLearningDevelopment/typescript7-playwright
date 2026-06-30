@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     SF KNOWLEDGE HUB — TypeScript 7 for Playwright — MODULE 1
+     TypeScript 7 for Playwright Testers
+     moduleKey (EXAMPLE_ID): pw-module-1-ts7-for-playwright
+     courseId  (CP_COURSE_ID): qAPsB1Cn3WbegUqkhPm3
+     Standalone repo: links relative within this folder.
+     Tabs: Overview / Install & first type-check / Check your knowledge.
+     ============================================================================ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1 — TypeScript 7 for Playwright Testers</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Code+Pro:wght@400;600&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1a6eb5; --blue-dark:#0f4c81; --ink:#1f2933; --muted:#647687;
+    --bg:#eef2f8; --card:#ffffff; --border:#d6e0ee; --green:#16a34a; --coral:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Source Sans 3',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.65;font-size:17px}
+  .userbar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:var(--card);border-bottom:1px solid var(--border);font-size:14px}
+  .signout{padding:8px 16px;border:none;border-radius:6px;background:var(--blue);color:#fff;cursor:pointer;font-family:inherit}
+  .crumbs{padding:14px 24px;color:var(--muted);font-size:13px}
+  .crumbs a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:860px;margin:0 auto;padding:8px 24px 80px}
+  h1{font-family:'Source Serif 4',Georgia,serif;font-size:30px;margin:8px 0 4px}
+  h3{font-family:'Source Serif 4',Georgia,serif;font-size:19px;margin:22px 0 6px}
+  .eyebrow{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+  .tag{font-family:'Source Code Pro',monospace;font-size:12px;background:#e3edf9;color:var(--blue-dark);padding:5px 10px;border-radius:14px}
+  .tabbar{display:flex;flex-wrap:wrap;gap:4px;border-bottom:2px solid var(--border);margin:22px 0 0}
+  .tabbtn{appearance:none;border:none;background:none;font-family:inherit;font-size:15px;font-weight:600;color:var(--muted);padding:11px 16px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+  .tabbtn:hover{color:var(--blue)}
+  .tabbtn.active{color:var(--blue-dark);border-bottom-color:var(--blue)}
+  .tabpanel{display:none}
+  .tabpanel.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:.4}to{opacity:1}}
+  .concepts{margin:18px 0}
+  .concept{border:1px solid var(--border);border-radius:12px;margin:10px 0;overflow:hidden;background:var(--card)}
+  .concept summary{cursor:pointer;padding:16px 18px;list-style:none;display:flex;align-items:center;gap:12px}
+  .concept summary::-webkit-details-marker{display:none}
+  .concept .chip{font-family:'Source Code Pro',monospace;font-size:12px;background:#e3edf9;color:var(--blue-dark);padding:5px 10px;border-radius:14px;white-space:nowrap}
+  .concept .headline{font-weight:600;color:var(--ink)}
+  .concept .toggle{margin-left:auto;font-family:'Source Code Pro',monospace;color:var(--blue);font-size:18px;line-height:1}
+  .concept[open] .toggle{transform:rotate(45deg)}
+  .concept .concept-body{padding:0 18px 18px}
+  .concept .concept-body p{margin:12px 0}
+  .concept .concept-body p:first-child{margin-top:4px}
+  .concept .concept-body p:last-child{margin-bottom:0}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;margin:18px 0}
+  .card p{margin:0 0 12px}
+  .card p:last-child{margin-bottom:0}
+  code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#eef3f9;padding:2px 6px;border-radius:5px}
+  pre{background:#0f2233;color:#e6edf3;border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:'Source Code Pro',monospace;font-size:14.5px;line-height:1.6;margin:14px 0}
+  pre code{background:none;color:inherit;padding:0;font-size:inherit}
+  .cmt{color:#7d97ad}
+  .note{border-left:4px solid var(--blue);background:#f4f8fd;border-radius:0 8px 8px 0;padding:12px 16px;margin:14px 0;font-size:15.5px}
+  .note.warn{border-left-color:#d08a1e;background:#fdf7ec}
+  .note strong{color:var(--blue-dark)}
+  .primer{border:1px solid var(--border);border-radius:12px;margin:18px 0;overflow:hidden}
+  .primer summary{cursor:pointer;padding:14px 18px;background:#f4f8fd;font-weight:600;color:var(--blue-dark);list-style:none}
+  .primer summary::-webkit-details-marker{display:none}
+  .primer summary::before{content:'+ ';font-family:'Source Code Pro',monospace}
+  .primer[open] summary::before{content:'– '}
+  .primer .primer-body{padding:0 18px 16px}
+  .primer .primer-body p{margin:12px 0}
+  .q{margin:16px 0}
+  .q .stem{font-weight:600;margin-bottom:8px}
+  .opt{display:block;border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer}
+  .opt input{margin-right:10px}
+  .submit-btn{padding:11px 20px;border:none;border-radius:8px;background:var(--blue);color:#fff;font-family:inherit;font-size:15px;cursor:pointer}
+  .submit-btn:disabled{background:#c3d3e6;cursor:not-allowed}
+  .submit-note{font-family:'Source Code Pro',monospace;font-size:13px;color:var(--muted);margin-top:8px}
+  .hidden{display:none}
+  .complete-bar{display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);margin-top:22px;padding-top:18px}
+  .complete-bar.disabled{opacity:.5}
+  .complete-bar .redo-btn{margin-left:auto;display:none;border:1px solid var(--border);background:#fff;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:inherit}
+  .complete-bar .redo-btn.visible{display:inline-block}
+  .complete-bar.done{color:var(--green)}
+  .nav-row{display:flex;justify-content:space-between;margin-top:30px}
+  .nav-btn{padding:12px 18px;border-radius:8px;background:var(--blue);color:#fff;text-decoration:none;font-weight:600}
+  .nav-btn.secondary{background:#fff;color:var(--blue);border:1px solid var(--border)}
+  .advisory{border-left:4px solid #d08a1e;background:#fdf7ec;border-radius:0 8px 8px 0;padding:12px 16px;margin:16px 0;font-size:14.5px;color:var(--ink)}
+  .advisory .when{font-family:'Source Code Pro',monospace;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#a96c12;display:block;margin-bottom:3px}
+  .advisory code{font-family:'Source Code Pro',monospace;font-size:.92em;background:#f5ead2;padding:2px 6px;border-radius:5px}
+</style>
+</head>
+<body>
+
+<div class="userbar">
+  <span>Welcome, <span id="userEmail">…</span></span>
+  <button class="signout" onclick="pmSignOut()">Sign out</button>
+</div>
+<div class="crumbs">
+  <a href="course-map.html">Back to course dashboard</a> / Module 1 / TypeScript 7 for Playwright Testers
+</div>
+
+<div class="wrap">
+  <div class="eyebrow">Module 1</div>
+  <h1>TypeScript 7 for Playwright Testers</h1>
+  <div class="tags">
+    <span class="tag">native compiler</span>
+    <span class="tag">tsc --noEmit</span>
+    <span class="tag">type-check gate</span>
+  </div>
+
+  <div class="tabbar" id="tabbar">
+    <button class="tabbtn active" data-tab="overview">Overview</button>
+    <button class="tabbtn" data-tab="install">Install &amp; first type-check</button>
+    <button class="tabbtn" data-tab="check">Check your knowledge</button>
+  </div>
+
+  <!-- TAB: OVERVIEW ========================================================= -->
+  <div class="tabpanel active" id="tab-overview">
+    <p style="color:var(--muted);margin:18px 0 4px">If you write Playwright tests in TypeScript, here's what TypeScript 7 means for you — and one fact about Playwright that makes it matter more than you might expect. Open each idea.</p>
+
+    <div class="concepts">
+      <details class="concept" open>
+        <summary>
+          <span class="chip">native compiler</span>
+          <span class="headline">Same TypeScript, ~10× faster</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>TypeScript 7 is not a new version of the language — it's the compiler, rebuilt to run as native code (ported to Go). It's often about 10× faster than the previous version, while checking your types in exactly the same way. Nothing about how you write a Playwright test changes; the tool that checks it just got much faster.</p>
+          <p>For a small handful of spec files you might not notice. For a large suite — hundreds of specs, page objects, fixtures, and helpers — the difference between a type-check that takes a minute and one that takes a few seconds is felt every day, both in CI and in your editor.</p>
+        </div>
+      </details>
+
+      <details class="concept">
+        <summary>
+          <span class="chip">the key fact</span>
+          <span class="headline">Playwright does not type-check your tests</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>This is the fact that makes TypeScript 7 directly relevant to you. When you run <code>npx playwright test</code>, Playwright takes your <code>.spec.ts</code> files, transforms them to JavaScript, and runs them — <strong>it does not check your types</strong>. A spec with a real type error (a misspelled property, a wrong argument) will still run; the type mistake simply isn't caught at that step.</p>
+          <p>So where does type safety come from? From running the TypeScript compiler <em>separately</em>, as its own step: <code>tsc --noEmit</code>. That command checks your types without producing any output (Playwright does the actual running). This separate gate is the thing TypeScript 7 makes ~10× faster — which is exactly why a faster compiler is a real win for a Playwright tester, not an abstract one.</p>
+        </div>
+      </details>
+
+      <details class="concept">
+        <summary>
+          <span class="chip">why it helps</span>
+          <span class="headline">Faster gate, faster editor, fewer flaky surprises</span>
+          <span class="toggle">+</span>
+        </summary>
+        <div class="concept-body">
+          <p>Three concrete benefits. First, your <strong>pretest type-check</strong> (the <code>tsc --noEmit</code> gate) finishes far faster, so the check you run before every test run — locally and in CI — stops being a bottleneck. Second, your <strong>editor</strong> uses the same engine, so autocomplete, hover, and error squiggles get snappier in big test repos. Third, catching type errors quickly means fewer silly mistakes (a wrong locator method, a typo'd fixture) slip through to a slow browser run only to fail there.</p>
+          <p>The rest of this course shows how to install it, wire the type-check gate, type your page objects and fixtures well, and adopt it on your suite without disrupting your existing runs.</p>
+        </div>
+      </details>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>Why use TypeScript for Playwright at all?</strong> Playwright runs fine with plain JavaScript, so what does TypeScript add? <strong>Type safety</strong> — the compiler catches whole categories of mistakes before a browser ever opens: a misspelled method (<code>page.getbyrole</code> instead of <code>getByRole</code>), passing the wrong type of argument, using a fixture that doesn't exist. In a test suite this matters doubly, because a typo that survives to runtime wastes a slow end-to-end run to discover something the compiler could have told you instantly.</p>
+
+        <p><strong>What the compiler actually does.</strong> The TypeScript compiler reads your <code>.ts</code> files, checks that the types line up (this is "type-checking"), and can also produce plain JavaScript ("emit"). For Playwright tests you usually only want the checking, not the output — Playwright handles turning your specs into runnable JavaScript itself. That's why the command you'll run is <code>tsc --noEmit</code>: check the types, emit nothing.</p>
+
+        <p><strong>Spec, page object, fixture — the vocabulary.</strong> A <strong>spec</strong> is a test file (<code>login.spec.ts</code>). A <strong>page object</strong> is a class that wraps a page's locators and actions so tests read cleanly and don't repeat selectors. A <strong>fixture</strong> is Playwright's mechanism for providing set-up things to a test (a logged-in page, test data) in a reusable way. TypeScript types all three, so when you use them wrong, you find out at your desk — and TypeScript 7 makes finding out faster.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: INSTALL & FIRST TYPE-CHECK ====================================== -->
+  <div class="tabpanel" id="tab-install">
+    <div class="advisory">
+      <span class="when">Accurate as of June 2026</span>
+      The package and binary names below track the TypeScript 7.0 RC. Preview details can shift — if a command behaves differently, check the official TypeScript site and the <code>@typescript/native-preview</code> npm page.
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">What you need first: Node.js</h3>
+      <p>Playwright already runs on Node.js, so you likely have it. The native TypeScript 7 compiler needs <strong>Node.js 16.20.0 or newer</strong> — any current LTS (20 or 22) is fine. Check it:</p>
+      <pre><code>node -v   <span class="cmt"># expect v16.20.0 or higher</span>
+npm -v</code></pre>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Install the TypeScript 7 compiler</h3>
+      <p>During the preview, the native compiler ships under its own package name, so it won't clash with anything Playwright installed. Add it to your test project as a dev dependency:</p>
+      <pre><code>npm install -D @typescript/native-preview</code></pre>
+      <div class="note warn"><strong>Binary name.</strong> On the <strong>7.0 RC and later</strong> the command is <code>tsc</code> (same as always). On <em>earlier</em> preview builds it was <code>tsgo</code>. If <code>tsc</code> isn't found right after installing a preview, try <code>tsgo</code> — same compiler.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Run your first type-check</h3>
+      <p>From your Playwright project, type-check without producing output. Playwright picks up your <code>tsconfig.json</code>; <code>tsc</code> does too:</p>
+      <pre><code><span class="cmt"># check types only — Playwright still runs the tests separately</span>
+npx tsc --noEmit
+
+<span class="cmt"># point at a specific tsconfig</span>
+npx tsc -p tsconfig.json --noEmit
+
+<span class="cmt"># watch mode for local development</span>
+npx tsc -p tsconfig.json --noEmit -w</code></pre>
+      <p>If your specs are clean, you'll get no output (that's success). If there's a type error — a wrong locator method, a missing fixture — <code>tsc</code> reports it now, before any browser opens. Try introducing a deliberate typo in a spec and re-running to see it caught.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">The pattern you're building toward</h3>
+      <p>The whole point is to run this fast check <em>before</em> your tests. A typical setup wires it as a "pretest" step so it runs automatically — we build this out in Module 2:</p>
+      <pre><code><span class="cmt">// package.json (preview)</span>
+{
+  "scripts": {
+    "pretest": "tsc --noEmit",
+    "test": "playwright test"
+  }
+}</code></pre>
+      <p>With this, <code>npm test</code> type-checks first and only runs the browser tests if the types are clean — and on TypeScript 7 that first step is fast enough that it never feels like a tax.</p>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>npm, npx, and dev dependencies.</strong> <strong>npm</strong> installs packages your project lists in <code>package.json</code>. <strong>npx</strong> runs a command from a package, preferring the copy installed in <em>your</em> project — so <code>npx tsc</code> runs the compiler version your project pinned, not a random global one. Installing with <code>-D</code> (<code>--save-dev</code>) records it under <code>devDependencies</code>: things needed while developing and testing, but not shipped to production. The compiler belongs there, exactly like Playwright itself.</p>
+
+        <p><strong>What <code>--noEmit</code> means.</strong> Normally a compiler produces output files. <code>--noEmit</code> tells <code>tsc</code> to do all its type-checking but write nothing to disk. For Playwright tests that's precisely what you want: you're using the compiler as a <em>checker</em>, not a build tool, because Playwright already turns your specs into runnable JavaScript on its own. Check, report problems, emit nothing.</p>
+
+        <p><strong>The <code>pre</code> script convention.</strong> npm has a small built-in convention: if you have a script named <code>test</code>, a script named <code>pretest</code> runs automatically right before it. That's how a single <code>npm test</code> can first run your type-check and then your Playwright run, in order, with no extra command. It's the standard way teams make "check types, then test" a one-step habit.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: CHECK YOUR KNOWLEDGE ============================================= -->
+  <div class="tabpanel" id="tab-check">
+    <div id="questionsWrap" class="card">
+      <div class="eyebrow">Check your knowledge</div>
+
+      <div class="q">
+        <div class="stem">Q1. What is TypeScript 7, in one sentence?</div>
+        <label class="opt"><input type="radio" name="q1" value="A">A new version of the language with lots of new syntax for tests.</label>
+        <label class="opt"><input type="radio" name="q1" value="B">The same TypeScript language on a rebuilt, native compiler that's roughly 10× faster and type-checks identically.</label>
+        <label class="opt"><input type="radio" name="q1" value="C">A replacement for Playwright's test runner.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q2. When you run <code>npx playwright test</code>, does Playwright type-check your specs?</div>
+        <label class="opt"><input type="radio" name="q2" value="A">No — it transforms specs to JavaScript and runs them; type errors are not caught at that step.</label>
+        <label class="opt"><input type="radio" name="q2" value="B">Yes — it fails the run on any type error.</label>
+        <label class="opt"><input type="radio" name="q2" value="C">Only if you pass a special --typecheck flag.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q3. Where does type safety for your Playwright tests actually come from?</div>
+        <label class="opt"><input type="radio" name="q3" value="A">From running the compiler separately, e.g. <code>tsc --noEmit</code> — which is the step TypeScript 7 speeds up.</label>
+        <label class="opt"><input type="radio" name="q3" value="B">From the browser engine during the test run.</label>
+        <label class="opt"><input type="radio" name="q3" value="C">From the operating system.</label>
+      </div>
+
+      <div class="q">
+        <div class="stem">Q4. Why does <code>tsc --noEmit</code> use the <code>--noEmit</code> flag for a Playwright project?</div>
+        <label class="opt"><input type="radio" name="q4" value="A">It makes the compiler run twice for safety.</label>
+        <label class="opt"><input type="radio" name="q4" value="B">You only want type-checking; Playwright produces the runnable JavaScript itself, so the compiler should emit nothing.</label>
+        <label class="opt"><input type="radio" name="q4" value="C">It disables type-checking to run faster.</label>
+      </div>
+
+      <button class="submit-btn" id="submitAnswersBtn" disabled>Submit answers</button>
+      <div class="submit-note" id="submitNote">Select an answer for each question to submit.</div>
+    </div>
+
+    <div id="submittedWrap" class="card hidden">
+      <p>Answers submitted. Review complete — mark this module as complete below.</p>
+    </div>
+
+    <div class="complete-bar disabled" id="completeBar">
+      <input type="checkbox" id="completeCb" disabled>
+      <label for="completeCb" id="completeLabel">Answer all questions to unlock</label>
+      <button class="redo-btn" id="redoBtn">&#x21BA; Redo module</button>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <a class="nav-btn secondary" href="course-map.html">← Course map</a>
+    <a class="nav-btn" href="pw-module-2-playwright-in-practice.html">Module 2: Playwright in Practice →</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+const EXAMPLE_ID = 'pw-module-1-ts7-for-playwright';
+const QIDS = ['q1','q2','q3','q4'];
+const CORRECT = { q1:'B', q2:'A', q3:'A', q4:'B' };
+
+document.getElementById('tabbar').addEventListener('click', function(e){
+  const btn = e.target.closest('.tabbtn'); if(!btn) return;
+  const tab = btn.getAttribute('data-tab');
+  document.querySelectorAll('.tabbtn').forEach(function(b){ b.classList.toggle('active', b===btn); });
+  document.querySelectorAll('.tabpanel').forEach(function(p){ p.classList.toggle('active', p.id==='tab-'+tab); });
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+const _FB_CONFIG = {
+  apiKey: "AIzaSyC-I-IOCq2fCwa471fsD5xOn6SYQSBDp7Q",
+  authDomain: "sfcertification-grafana.firebaseapp.com",
+  projectId: "sfcertification-grafana",
+  storageBucket: "sfcertification-grafana.firebasestorage.app",
+  messagingSenderId: "227322696511",
+  appId: "1:227322696511:web:12e7ced7dd3d45fa06798a"
+};
+if (!window._fbApp) window._fbApp = firebase.initializeApp(_FB_CONFIG);
+const _auth = firebase.auth(window._fbApp);
+window._learnerUid = 'anon'; window._learnerEmail = null;
+
+window.pmLearnerKey = function(exampleId){ return 'pm_learner_' + window._learnerUid + '_' + exampleId; };
+function loadState(){ try { return JSON.parse(localStorage.getItem(window.pmLearnerKey(EXAMPLE_ID))) || {}; } catch(e){ return {}; } }
+function saveState(s){ localStorage.setItem(window.pmLearnerKey(EXAMPLE_ID), JSON.stringify(s)); }
+
+window.pmSignOut = function(){ _auth.signOut(); };
+
+_auth.onAuthStateChanged(function(user){
+  if (user && user.email && user.email.endsWith('@sourcefuse.com')) {
+    window._learnerUid = user.uid; window._learnerEmail = user.email;
+    document.getElementById('userEmail').textContent = user.email;
+    document.dispatchEvent(new Event('learnerReady'));
+  } else if (user && user.email && !user.email.endsWith('@sourcefuse.com')) {
+    _auth.signOut();
+  } else {
+    window.location.href = 'course-map.html';
+  }
+});
+
+document.addEventListener('learnerReady', function() {
+  const state = loadState();
+  cpEnsureModuleStarted();
+
+  const completeCb = document.getElementById('completeCb');
+  if (completeCb) {
+    completeCb.addEventListener('change', function() {
+      if (!completeCb.checked) return;
+      const s = loadState(); s.complete = true; saveState(s);
+      activateCompleteBar(true);
+    });
+  }
+  const redoBtn = document.getElementById('redoBtn');
+  if (redoBtn) redoBtn.addEventListener('click', function() {
+    localStorage.removeItem(window.pmLearnerKey(EXAMPLE_ID));
+    document.getElementById('questionsWrap').classList.remove('hidden');
+    document.getElementById('submittedWrap').classList.add('hidden');
+    document.querySelectorAll('.opt input[type="radio"]').forEach(function(r){ r.checked = false; });
+    document.getElementById('submitAnswersBtn').disabled = true;
+    document.getElementById('submitNote').textContent = 'Select an answer for each question to submit.';
+    activateCompleteBar(false);
+  });
+
+  if (state.complete) { showSubmittedState(); activateCompleteBar(true); return; }
+  if (state.submittedAt) { showSubmittedState(); activateCompleteBar(false); return; }
+
+  document.querySelectorAll('.opt input[type="radio"]').forEach(function(radio){
+    radio.addEventListener('change', checkAllAnswered);
+  });
+  document.getElementById('submitAnswersBtn').addEventListener('click', submitAnswers);
+});
+
+function checkAllAnswered() {
+  const all = QIDS.every(n => document.querySelector('input[name="'+n+'"]:checked'));
+  document.getElementById('submitAnswersBtn').disabled = !all;
+  document.getElementById('submitNote').textContent = all ? 'Ready to submit.' : 'Select an answer for each question to submit.';
+}
+
+function submitAnswers() {
+  const answers = {};
+  QIDS.forEach(function(n){
+    const v = document.querySelector('input[name="'+n+'"]:checked'); if (v) answers[n] = v.value;
+  });
+  let correct = 0;
+  Object.keys(CORRECT).forEach(function(n){ if (answers[n] === CORRECT[n]) correct++; });
+  const s = loadState();
+  s.exampleId = EXAMPLE_ID; s.answers = answers; s.correct = correct;
+  s.submittedAt = new Date().toISOString();
+  saveState(s);
+  showSubmittedState();
+  activateCompleteBar(false);
+}
+
+function showSubmittedState() {
+  document.getElementById('questionsWrap').classList.add('hidden');
+  document.getElementById('submittedWrap').classList.remove('hidden');
+}
+
+function activateCompleteBar(isDone) {
+  const bar = document.getElementById('completeBar');
+  const cb = document.getElementById('completeCb');
+  const label = document.getElementById('completeLabel');
+  const redo = document.getElementById('redoBtn');
+  if (!bar) return;
+  if (isDone) {
+    bar.className = 'complete-bar done';
+    cb.disabled = true; cb.checked = true;
+    label.textContent = '✓ Module complete';
+    if (redo) redo.classList.add('visible');
+    cpWriteModuleComplete();
+  } else {
+    bar.className = 'complete-bar';
+    cb.disabled = false; cb.checked = false;
+    label.textContent = 'Mark module as complete';
+    if (redo) redo.classList.remove('visible');
+  }
+}
+</script>
+
+<!-- ===== SHARED courseProgress v2 wiring (inlined) ========================= -->
+<script>
+var CP_COURSE_ID = 'qAPsB1Cn3WbegUqkhPm3';
+var THIS_MODULE_KEY = EXAMPLE_ID;
+var CP_MODULE_IDS = [
+  'pw-module-1-ts7-for-playwright',
+  'pw-module-2-playwright-in-practice',
+  'pw-module-3-adopting-ts7'
+];
+
+function cpNow() {
+  var d = new Date();
+  var pad = function(n){ return String(n).padStart(2,'0'); };
+  return {
+    date: d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),
+    time: pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()),
+    ms:   d.getTime()
+  };
+}
+function cpFmtDuration(ms) {
+  if (ms == null || ms < 0) return null;
+  var s = Math.floor(ms/1000), h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+  if (h > 0) return h+'h '+m+'m '+sec+'s';
+  if (m > 0) return m+'m '+sec+'s';
+  return sec+'s';
+}
+function cpDb() { return firebase.firestore(window._fbApp); }
+function cpDocRef() { return cpDb().collection('courseProgress').doc(window._learnerUid); }
+function cpReady() { return window._fbApp && window._learnerUid && window._learnerUid !== 'anon'; }
+
+function cpEnsureModuleStarted() {
+  if (!cpReady()) return;
+  var ref = cpDocRef();
+  ref.get().then(function(snap){
+    var data = snap.exists ? (snap.data() || {}) : {};
+    var course = (data.courses && data.courses[CP_COURSE_ID]) || {};
+    var mods = course.modules || {};
+    var t = cpNow();
+    var update = { email: window._learnerEmail || null, name: window._learnerEmail || null, courses: {} };
+    update.courses[CP_COURSE_ID] = { moduleInProgress: THIS_MODULE_KEY, modules: {} };
+    if (!mods[THIS_MODULE_KEY] || !mods[THIS_MODULE_KEY].startedOn) {
+      update.courses[CP_COURSE_ID].modules[THIS_MODULE_KEY] = { startedOn: t.date, startedAt: t.time };
+    }
+    if (!course.courseStartedOn) { update.courses[CP_COURSE_ID].courseStartedOn = t.date; update.courses[CP_COURSE_ID].courseStartedAt = t.time; }
+    ref.set(update, { merge: true })
+       .catch(function(e){ console.warn('[courseProgress] start write failed:', e.message); });
+  }).catch(function(e){ console.warn('[courseProgress] start read failed:', e.message); });
+}
+
+function cpWriteModuleComplete() {
+  if (!cpReady()) return;
+  var ref = cpDocRef();
+  ref.get().then(function(snap){
+    var data = snap.exists ? (snap.data() || {}) : {};
+    var course = (data.courses && data.courses[CP_COURSE_ID]) || {};
+    var mods = course.modules || {};
+    var t = cpNow();
+    var startMs = null;
+    var mEntry = mods[THIS_MODULE_KEY];
+    if (mEntry && mEntry.startedOn && mEntry.startedAt) {
+      startMs = new Date(mEntry.startedOn + 'T' + mEntry.startedAt).getTime();
+    }
+    var moduleTimeTaken = startMs != null ? cpFmtDuration(t.ms - startMs) : null;
+
+    var courseUpdate = { modules: {} };
+    var existing = mods[THIS_MODULE_KEY] || {};
+    courseUpdate.modules[THIS_MODULE_KEY] = {
+      completedOn: existing.completedOn || t.date,
+      completedAt: existing.completedAt || t.time,
+      timeTaken:   existing.timeTaken   || moduleTimeTaken
+    };
+    if (course.moduleInProgress === THIS_MODULE_KEY) courseUpdate.moduleInProgress = null;
+
+    var completedCount = 0;
+    CP_MODULE_IDS.forEach(function(id){
+      if (id === THIS_MODULE_KEY) { completedCount++; return; }
+      if (mods[id] && mods[id].completedOn) completedCount++;
+    });
+    if (completedCount >= CP_MODULE_IDS.length && !course.courseCompletedOn) {
+      courseUpdate.courseCompletedOn = t.date;
+      courseUpdate.courseCompletedAt = t.time;
+      if (course.courseStartedOn && course.courseStartedAt) {
+        var cStart = new Date(course.courseStartedOn + 'T' + course.courseStartedAt).getTime();
+        courseUpdate.timeTaken = cpFmtDuration(t.ms - cStart);
+      }
+    }
+    var update = { email: window._learnerEmail || null, name: window._learnerEmail || null, courses: {} };
+    update.courses[CP_COURSE_ID] = courseUpdate;
+    ref.set(update, { merge: true })
+       .catch(function(e){ console.warn('[courseProgress] complete write failed:', e.message); });
+  }).catch(function(e){ console.warn('[courseProgress] complete read failed:', e.message); });
+}
+</script>
+</body>
+</html>
