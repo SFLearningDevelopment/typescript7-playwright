@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026063001 -->
+<!-- build: 2026063002 -->
 <!-- ============================================================================
      SF KNOWLEDGE HUB — TypeScript 7 for Playwright — MODULE 2
      Playwright on TypeScript 7 in Practice
@@ -131,7 +131,38 @@
           <span class="toggle">+</span>
         </summary>
         <div class="concept-body">
-          <p>Because Playwright runs specs without type-checking them, the discipline that makes TypeScript worthwhile is running <code>tsc --noEmit</code> as a gate <em>before</em> the browser tests. Wire it as a <code>pretest</code> script and a single <code>npm test</code> does both in order: check types, then run. In CI, run the same check as its own step before <code>playwright test</code>.</p>
+          <p>Because Playwright runs specs without type-checking them, the discipline that makes TypeScript worthwhile is running <code>tsc --noEmit</code> as a gate <em>before</em> the browser tests. Here's why that matters — this spec has a real type error, but <code>npx playwright test</code> will happily run it:</p>
+          <pre><code><span class="cmt">// login.spec.ts — the wrong argument type is a bug Playwright won't catch</span>
+import { test } from '@playwright/test';
+
+test('sign in', async ({ page }) =&gt; {
+  await page.goto('/login');
+  await page.getByLabel('Password').fill(<span class="del">12345</span>);  <span class="cmt">// number, not string</span>
+});</code></pre>
+          <p>Playwright transforms and runs it; the mistake only surfaces (if at all) mid-run in the browser. The separate gate catches it first, before any browser opens:</p>
+          <pre><code>$ npx tsc --noEmit
+login.spec.ts:5:41 - error TS2345: Argument of type 'number'
+  is not assignable to parameter of type 'string'.</code></pre>
+
+          <p><strong>Wire it as a <code>pretest</code> script</strong> so a single <code>npm test</code> does both in order — check types, then run. (npm runs a <code>pretest</code> script automatically right before <code>test</code>.) Run <code>npm test</code> on your own machine and the type-check happens first:</p>
+          <pre><code><span class="cmt">// package.json</span>
+{
+  "scripts": {
+    "pretest": "tsc --noEmit",
+    "test": "playwright test"
+  }
+}</code></pre>
+          <pre><code>$ npm test
+&gt; pretest: tsc --noEmit      <span class="cmt"># runs first; stops here if types fail</span>
+&gt; test: playwright test      <span class="cmt"># only runs if the gate passed</span></code></pre>
+
+          <p><strong>In CI</strong>, run the same check as its own step before <code>playwright test</code>, so a type error fails the pipeline fast and cheap — no browser spin-up needed to find it:</p>
+          <pre><code><span class="cmt"># GitHub Actions</span>
+- name: Type-check
+  run: npx tsc --noEmit
+- name: Run Playwright tests
+  run: npx playwright test</code></pre>
+
           <p>On TypeScript 7 this gate is fast enough that it stops being something people skip "to save time." That's the real behavioural win: a fast gate is a gate people actually keep.</p>
         </div>
       </details>
