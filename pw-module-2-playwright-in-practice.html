@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: 2026063002 -->
+<!-- build: 2026063003 -->
 <!-- ============================================================================
      SF KNOWLEDGE HUB — TypeScript 7 for Playwright — MODULE 2
      Playwright on TypeScript 7 in Practice
@@ -116,6 +116,7 @@
     <button class="tabbtn active" data-tab="overview">Overview</button>
     <button class="tabbtn" data-tab="typing">Typing your tests</button>
     <button class="tabbtn" data-tab="tsconfig">tsconfig &amp; the gate</button>
+    <button class="tabbtn" data-tab="practice">Test your learning</button>
     <button class="tabbtn" data-tab="check">Check your knowledge</button>
   </div>
 
@@ -316,9 +317,8 @@ for (const u of users) {
     "strict": true,            <span class="cmt">// catch null/any mistakes in tests</span>
     "target": "ESNext",
     "module": "commonjs",
-    "baseUrl": ".",            <span class="cmt">// required if you use "paths"</span>
-    "paths": {
-      "@pages/*": ["pages/*"]  <span class="cmt">// Playwright honours this</span>
+    "paths": {                 <span class="cmt">// Playwright honours this; no baseUrl needed in TS7</span>
+      "@pages/*": ["./pages/*"]
     }
   }
 }</code></pre>
@@ -358,9 +358,157 @@ for (const u of users) {
       <div class="primer-body">
         <p><strong>What tsconfig.json is.</strong> It's the file that tells the TypeScript compiler how to treat your project: which files to include, how strict to be, what to emit. The compiler reads it automatically. For a Playwright project it does double duty — <code>tsc</code> reads all of it for the gate, and Playwright reads a few options from it when loading specs.</p>
 
-        <p><strong>baseUrl and paths.</strong> These two let you write tidy imports. <code>baseUrl</code> sets the directory that bare import paths resolve against; <code>paths</code> maps a prefix to a location — so <code>import { LoginPage } from '@pages/LoginPage'</code> can resolve to <code>tests/pages/LoginPage</code> instead of a long relative path. Both are among the few options Playwright actually honours, which is why they're worth knowing as a tester. (Note <code>baseUrl</code> must be set if you use <code>paths</code>.)</p>
+        <p><strong>baseUrl and paths.</strong> These let you write tidy imports. <code>paths</code> maps a prefix to a location — so <code>import { LoginPage } from '@pages/LoginPage'</code> can resolve to <code>tests/pages/LoginPage</code> instead of a long relative path. <code>paths</code> is among the few options Playwright actually honours, which is why it's worth knowing as a tester. Older TypeScript required <code>baseUrl</code> to be set alongside <code>paths</code>, but <strong>TypeScript 7 deprecates <code>baseUrl</code></strong> — modern TypeScript resolves <code>paths</code> relative to the <code>tsconfig.json</code>'s own location, so you use <code>paths</code> on its own. (If you set <code>baseUrl</code> under TS7 you'll get a deprecation error.)</p>
 
         <p><strong>Separate tsconfig per directory.</strong> TypeScript lets each directory have its own <code>tsconfig.json</code>, and a child config can <code>extends</code> a parent to inherit and override settings. A common layout is a root config for shared settings and a <code>tests/tsconfig.json</code> for test-specific preferences. Playwright looks up the closest config to each file, so this layering "just works" for your specs.</p>
+      </div>
+    </details>
+  </div>
+
+  <!-- TAB: TEST YOUR LEARNING ============================================== -->
+  <div class="tabpanel" id="tab-practice">
+    <p style="color:var(--muted);margin:18px 0 4px">Time to put Modules 1&ndash;3 together on a real project. You'll start from a working Playwright + TypeScript&nbsp;7 repo, then fix a deliberately broken copy &mdash; getting its CI pipeline from red to green by working through the same problems a real adoption throws at you.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Two repositories</h3>
+      <p>There's a matched pair. Use the <strong>Use this template</strong> button on each to create your own copy you can push and run.</p>
+      <table class="tbl">
+        <tr><th>Repo</th><th>What it is</th></tr>
+        <tr>
+          <td><a href="https://github.com/SFLearningDevelopment/playwright-ts7-starter-pack">playwright-ts7-starter-pack</a></td>
+          <td><strong>The exercise.</strong> Intentionally broken. Your job is to make its CI pipeline pass.</td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/SFLearningDevelopment/playwright-ts7-starter">playwright-ts7-starter</a></td>
+          <td><strong>The answer key.</strong> The same project, working, with a green pipeline. Compare against it when you're stuck.</td>
+        </tr>
+      </table>
+      <div class="note"><strong>Get your own copy.</strong> On each repo, click the green <strong>Use this template</strong> &rarr; <strong>Create a new repository</strong>. That gives you a clean copy with its own GitHub Actions, so your runs are yours alone. (No GitHub account? Use <strong>Code &rarr; Download ZIP</strong> and run it locally instead &mdash; you just won't get the CI runs.)</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">What the project contains</h3>
+      <p>A tiny but complete Playwright suite that exercises everything from this course, targeting the public TodoMVC demo:</p>
+      <ul class="clean">
+        <li>a typed <strong>page object</strong> and a typed <strong>custom fixture</strong> (Module&nbsp;2);</li>
+        <li>a <code>tests/tsconfig.json</code> using the options Playwright honours (Module&nbsp;2);</li>
+        <li>the <strong>type-check gate</strong> wired as <code>pretest</code>, and a <strong>CI pipeline</strong> that type-checks before running the browser tests (Modules&nbsp;2&ndash;3).</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Run it locally</h3>
+      <p>Whichever repo you're in, the commands are the same:</p>
+      <pre><code><span class="cmt"># install dependencies</span>
+npm install
+
+<span class="cmt"># install the browser Playwright drives</span>
+npx playwright install chromium
+
+<span class="cmt"># run the type-check gate first, then the tests (via the pretest script)</span>
+npm test</code></pre>
+      <p>On the working repo you'll see the gate pass, then the tests pass. On the exercise repo, things will break &mdash; which is the point.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Read the pipeline</h3>
+      <p>Open <code>.github/workflows/ci.yml</code>. The important part is the <em>order</em> of steps:</p>
+      <pre><code>- name: Install dependencies
+  run: npm install
+
+- name: Type-check          <span class="cmt"># the gate — runs FIRST</span>
+  run: npx tsgo -p tests/tsconfig.json --noEmit
+
+- name: Install Playwright browsers
+  run: npx playwright install --with-deps chromium
+
+- name: Run Playwright tests <span class="cmt"># only if the gate passed</span>
+  run: npx playwright test</code></pre>
+      <p>This is the whole philosophy of the course in one file: because Playwright doesn't type-check your specs, the pipeline runs the fast type-check gate <em>before</em> spending time on browsers. A type error fails the build in seconds, not minutes.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">The exercise: get the pipeline green</h3>
+      <p>Push the <strong>starter-pack</strong> (via your template copy) and open its <strong>Actions</strong> tab. The CI run will fail. Read the failing step, fix it, commit, and let it run again. There are <strong>three</strong> problems, and each fix reveals the next &mdash; exactly how a real adoption goes. Try each before peeking at the answer key.</p>
+      <div class="note"><strong>Hints only &mdash; full fixes are below.</strong> (1) Check the install command. (2) Check that <code>tsc</code> resolves. (3) Check the navigation.</div>
+    </div>
+
+    <h3>The three problems &mdash; walkthrough</h3>
+    <p style="color:var(--muted)">Work through these in order. Each is a real failure mode, its cause, and the fix. Try to solve each yourself first.</p>
+
+    <details class="primer">
+      <summary>Part 1 &mdash; the install step fails</summary>
+      <div class="primer-body">
+        <p><strong>What you'll see.</strong> The very first CI step fails before anything else runs:</p>
+        <pre><code>npm error code EUSAGE
+The `npm ci` command can only install with an existing package-lock.json</code></pre>
+        <p><strong>Why.</strong> The workflow uses <code>npm ci</code>, the "clean install" command &mdash; but it requires a committed <code>package-lock.json</code>, and this project doesn't have one. <code>npm ci</code> is stricter than <code>npm install</code> by design.</p>
+        <p><strong>Fix.</strong> In <code>.github/workflows/ci.yml</code>, change the install step from <code>npm ci</code> to <code>npm install</code> (which resolves from <code>package.json</code> and needs no lockfile). Commit, and CI moves past install.</p>
+        <pre><code>- name: Install dependencies
+  <span class="del">  run: npm ci</span>
+  <span class="add">  run: npm install</span></code></pre>
+        <p><em>Lesson:</em> infrastructure matters. Before any test logic runs, the pipeline has to be able to install your project.</p>
+      </div>
+    </details>
+
+    <details class="primer">
+      <summary>Part 2 &mdash; the type-check step runs the wrong compiler</summary>
+      <div class="primer-body">
+        <p><strong>What you'll see.</strong> Install now passes, but the type-check step fails oddly &mdash; it downloads and runs a random, ancient package:</p>
+        <pre><code>npm warn exec The following package was not found and will be installed: tsc@2.0.4
+This is not the tsc command you are looking for</code></pre>
+        <p><strong>Why.</strong> This is the exact <code>tsc</code>-vs-<code>tsgo</code> point from Module&nbsp;1. The project uses the native TypeScript&nbsp;7 compiler (<code>@typescript/native-preview</code>), whose binary on preview builds is <strong><code>tsgo</code></strong>, not <code>tsc</code>. So <code>npx tsc</code> doesn't find a local <code>tsc</code>, goes to the registry, and grabs an unrelated old package named <code>tsc</code>.</p>
+        <p><strong>Fix.</strong> Use <code>tsgo</code> in both the CI step and the <code>package.json</code> scripts, so the gate runs the native compiler you actually installed.</p>
+        <pre><code><span class="cmt"># .github/workflows/ci.yml</span>
+- name: Type-check
+  <span class="del">  run: npx tsc  -p tests/tsconfig.json --noEmit</span>
+  <span class="add">  run: npx tsgo -p tests/tsconfig.json --noEmit</span></code></pre>
+        <pre><code><span class="cmt">// package.json — same change in the scripts</span>
+"pretest":   <span class="del">"tsc  -p tests/tsconfig.json --noEmit"</span> <span class="add">"tsgo -p tests/tsconfig.json --noEmit"</span>,
+"typecheck": <span class="del">"tsc  -p tests/tsconfig.json --noEmit"</span> <span class="add">"tsgo -p tests/tsconfig.json --noEmit"</span></code></pre>
+        <p><em>Lesson:</em> knowing the compiler's real binary name isn't trivia &mdash; get it wrong and your gate silently runs the wrong thing.</p>
+      </div>
+    </details>
+
+    <details class="primer">
+      <summary>Part 3 &mdash; types pass, but the browser tests fail</summary>
+      <div class="primer-body">
+        <p><strong>What you'll see.</strong> The type-check now passes cleanly &mdash; and yet the browser tests fail. One test passes (the one that just checks the empty list); the two that add a todo time out:</p>
+        <pre><code>2 failed
+  [chromium] &rsaquo; todo.spec.ts &rsaquo; can add a single todo
+  [chromium] &rsaquo; todo.spec.ts &rsaquo; can add several todos
+1 passed
+   at TodoPage.add (tests/pages/TodoPage.ts:24)  <span class="cmt"># timed out on .fill()</span></code></pre>
+        <p><strong>Why.</strong> This is the most important lesson in the whole course. <strong>The type-check gate passed &mdash; the types were correct all along &mdash; but there was still a real runtime bug.</strong> The TodoMVC demo is a hash-routed single-page app; the page object navigated with <code>goto('/')</code> and started typing before the app was ready, so <code>fill()</code> timed out. Types can't catch that. Only running the test can.</p>
+        <p><strong>Fix.</strong> Navigate to the app's actual route and wait for the input before interacting, and align <code>baseURL</code> so the path resolves correctly.</p>
+        <pre><code><span class="cmt">// tests/pages/TodoPage.ts</span>
+async goto(): Promise&lt;void&gt; {
+  <span class="del">await this.page.goto('/');</span>
+  <span class="add">await this.page.goto('/todomvc/#/');</span>
+  <span class="add">await this.newTodoInput.waitFor({ state: 'visible' });</span>
+}</code></pre>
+        <pre><code><span class="cmt">// playwright.config.ts — baseURL points at the site root so '/todomvc/#/' resolves</span>
+use: {
+  <span class="del">baseURL: 'https://demo.playwright.dev/todomvc',</span>
+  <span class="add">baseURL: 'https://demo.playwright.dev',</span>
+}</code></pre>
+        <p><em>Lesson &mdash; the one to remember past the exam:</em> a passing type-check is <strong>necessary but not sufficient</strong>. The gate protects you from a whole class of mistakes, but it cannot tell you your test actually works against a real app. That's why you still run the browser tests &mdash; and why the pipeline runs the gate <em>first</em> (fast, cheap) and the tests <em>after</em> (slower, but the real proof).</p>
+      </div>
+    </details>
+
+    <div class="card">
+      <h3 style="margin-top:0">Done when it's green</h3>
+      <p>Once all three are fixed, your exercise repo's CI run goes fully green &mdash; and it now matches the <a href="https://github.com/SFLearningDevelopment/playwright-ts7-starter">answer-key repo</a>. You've installed and run TypeScript&nbsp;7 on a Playwright project, wired the type-check gate, and adopted it in CI &mdash; the whole arc of this course, applied. When you're ready, take the certification exam from the course dashboard.</p>
+    </div>
+
+    <details class="primer">
+      <summary>Refresh your knowledge?</summary>
+      <div class="primer-body">
+        <p><strong>What "Use this template" does.</strong> Unlike a fork (which stays linked to the original and is meant for contributing changes back), <strong>Use this template</strong> creates an independent copy with fresh history &mdash; your own repo, your own Actions runs, no connection to the source. It's the right choice for a personal exercise: you can commit and break things freely without touching anyone else's repo.</p>
+
+        <p><strong>Why a broken repo teaches more than a working one.</strong> Reading a correct solution is passive; making a red pipeline green is active. Each failure here is one you'll plausibly meet for real when adopting TypeScript&nbsp;7 &mdash; a missing lockfile, a compiler binary name, a runtime bug the type-checker can't see. Fixing them yourself builds the debugging reflex the certification is really about.</p>
+
+        <p><strong>The through-line of all three parts.</strong> Part&nbsp;1 is about the pipeline being able to run at all; Part&nbsp;2 is about running the <em>right</em> compiler; Part&nbsp;3 is about the limits of what that compiler can tell you. Together they trace the exact boundary this course keeps returning to: the type-check gate is fast, valuable, and mandatory &mdash; and it is still not a substitute for running your tests.</p>
       </div>
     </details>
   </div>
